@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jal Jeevan Mission - Har Ghar Jal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Header */
+        .header {
+            /* background: linear-gradient(135deg, #f5e6d3 0%, #e8d4b8 100%); */
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left img {
+            height: 60px;
+        }
+
+        .header-center {
+            text-align: center;
+            flex: 1;
+        }
+
+        .header-center h1 {
+            color: #1976d2;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-center p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .header-right img {
+            height: 60px;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 90px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+        }
+
+        .sidebar-item {
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background-color: #e3f2fd;
+            border-left-color: #1976d2;
+        }
+
+        .sidebar-item .icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 5px;
+            background-color: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .sidebar-item .label {
+            font-size: 10px;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+        }
+
+        .panel-title .district {
+            color: #7b1fa2;
+            font-weight: bold;
+        }
+
+        .panel-title .back-link {
+            color: #1976d2;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .date-badge {
+            background-color: #1976d2;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            background: #4a9fd8;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .map-container a {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .map-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .map-placeholder {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 8px;
+            background-color: transparent;
+            border-radius: 5px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            gap: 3px;
+        }
+
+        .legend-color {
+            width: 50px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .legend-icons {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+            font-size: 11px;
+            padding: 5px 10px;
+            justify-content: flex-start;
+        }
+
+        .legend-icons span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-icons .star-icon {
+            font-size: 14px;
+        }
+
+        /* District Progress Chart */
+        .district-progress {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .district-progress h3 {
+            color: #ff9800;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 250px;
+            gap: 2px;
+            padding-top: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #2196f3, #42a5f5);
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, #1976d2, #2196f3);
+        }
+
+        .y-axis {
+            position: absolute;
+            left: -5px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .y-axis-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .chart-footer {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .citizen-corner {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .citizen-corner h3 {
+            color: #ff9800;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .water-quality-icon {
+            margin-left: 10px;
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Status Cards */
+        .status-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .status-card h3 .district {
+            color: #7b1fa2;
+        }
+
+        .status-card h2 {
+            color: #ff9800;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .stat-value.brown {
+            color: #795548;
+        }
+
+        .stat-value.green {
+            color: #4caf50;
+        }
+
+        .stat-value.blue {
+            color: #1976d2;
+        }
+
+        .stat-percentage {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .bottom-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .bottom-stat {
+            text-align: center;
+        }
+
+        .bottom-stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .bottom-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Har Ghar Jal Status */
+        .hgj-status {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .hgj-status h3 {
+            color: #ff9800;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .hgj-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .hgj-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .hgj-card.pink {
+            background-color: #fce4ec;
+        }
+
+        .hgj-card.blue {
+            background-color: #e3f2fd;
+        }
+
+        .hgj-card.green {
+            background-color: #e8f5e9;
+        }
+
+        .hgj-card-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .hgj-card-count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .hgj-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .hgj-stat {
+            text-align: center;
+        }
+
+        .hgj-stat-label {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .hgj-stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .info-icon {
+            color: #1976d2;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 15px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            color: #ff9800;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .progress-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .progress-tab {
+            padding: 8px 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #666;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .progress-tab.active {
+            background-color: #2196f3;
+            color: white;
+            border-color: #2196f3;
+        }
+
+        .progress-graph {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(to top, #2196f3 0%, #64b5f6 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80%;
+            background: linear-gradient(to right,
+                    rgba(33, 150, 243, 0.9) 0%,
+                    rgba(33, 150, 243, 0.95) 50%,
+                    rgba(33, 150, 243, 1) 100%);
+            clip-path: polygon(0% 100%,
+                    5% 95%,
+                    10% 90%,
+                    15% 85%,
+                    20% 80%,
+                    25% 75%,
+                    30% 70%,
+                    35% 65%,
+                    40% 60%,
+                    45% 58%,
+                    50% 56%,
+                    55% 54%,
+                    60% 52%,
+                    65% 50%,
+                    70% 48%,
+                    75% 46%,
+                    80% 44%,
+                    85% 42%,
+                    90% 40%,
+                    95% 38%,
+                    100% 36%,
+                    100% 100%);
+        }
+
+        .graph-label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Nav Button */
+        .nav-btn {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Detailed Zone Table Styles */
+        .zone-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+            padding-bottom: 10px;
+            /* Custom scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: #1976d2 #f1f1f1;
+        }
+
+        .zone-table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .zone-table-wrapper::-webkit-scrollbar-thumb {
+            background-color: #1976d2;
+            border-radius: 4px;
+        }
+
+        .detailed-zone-table {
+            width: max-content;
+            /* allows table to expand horizontally */
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 100%;
+        }
+
+        .detailed-zone-table th {
+            background: linear-gradient(180deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #1565c0;
+            white-space: nowrap;
+            min-width: 250px;
+            /* Fixed width for consistency */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .detailed-zone-table td {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            vertical-align: top;
+            min-width: 250px;
+        }
+
+        .dma-block {
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
+        }
+
+        .dma-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dma-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .area-list {
+            list-style-type: none;
+            padding-left: 5px;
+            margin: 0;
+        }
+
+        .area-item {
+            font-size: 12px;
+            padding: 2px 0;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .area-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        /* Rural Status Section */
+        .rural-status-section {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .rural-status-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rural-status-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .rural-status-title-group h2 {
+            color: #1976d2;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .rural-status-title-group h3 {
+            color: #ff9800;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .source-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 1px solid #bbdefb;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background-color: #fcfcfc;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .metric-value.blue {
+            color: #1976d2;
+        }
+
+        .metric-value.green {
+            color: #4caf50;
+        }
+
+        .metric-value.orange {
+            color: #ef6c00;
+        }
+
+        .secondary-metrics {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .coverage-meter-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .radial-progress {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: conic-gradient(#4caf50 var(--progress, 0%), #eee 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .radial-progress::after {
+            content: "";
+            width: 54px;
+            height: 54px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .radial-value {
+            position: relative;
+            z-index: 1;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-bars-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-item {
+            width: 100%;
+        }
+
+        .progress-label-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .progress-bg {
+            height: 6px;
+            background-color: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #2196f3, #64b5f6);
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.1, 0.5, 0.5, 1);
+        }
+
+        .progress-fill.green {
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+        }
+
+        .status-cards-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .hgj-mini-card {
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .hgj-mini-card.pink {
+            background-color: #fce4ec;
+            border: 1px solid #f8bbd0;
+        }
+
+        .hgj-mini-card.blue {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+        }
+
+        .hgj-mini-card.green {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .hgj-mini-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .hgj-mini-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hgj-mini-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .hgj-mini-stat b {
+            color: #333;
+        }
+
+        @media (max-width: 1200px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .status-cards-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .secondary-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== NEW INSIGHTS & PROGRESS SECTION ===== */
+        .insights-progress-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+            margin-bottom: 15px;
+        }
+
+        /* Insights Container */
+        .insights-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .insights-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .insights-header h3 {
+            color: #1976d2;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .insight-card {
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .insight-card.highest-coverage {
+            background-color: #ecfdf5;
+            border-left-color: #10b981;
+        }
+
+        .insight-card.lowest-coverage {
+            background-color: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .insight-card.most-improved {
+            background-color: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .insight-card.critical-area {
+            background-color: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .insight-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .insight-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .insight-label {
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .insight-main {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .insight-stat {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        /* Progress Snapshot Container */
+        .progress-snapshot-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .snapshot-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .snapshot-header h3 {
+            color: #1976d2;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .snapshot-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Donut Chart */
+        .donut-chart-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 140px;
+        }
+
+        .donut-chart {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
+        }
+
+        .donut-progress {
+            animation: fillDonut 1.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fillDonut {
+            from {
+                stroke-dasharray: 0 285.5;
+            }
+
+            to {
+                stroke-dasharray: 282.2 285.5;
+            }
+        }
+
+        /* Progress Legend */
+        .progress-legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-item.covered .legend-dot {
+            background-color: #10b981;
+        }
+
+        .legend-item.remaining .legend-dot {
+            background-color: #e2e8f0;
+        }
+
+        .legend-label {
+            font-size: 12px;
+        }
+
+        .legend-label div:first-child {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .legend-value {
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        /* Taluka Progress Bars */
+        .taluka-progress {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 12px;
+        }
+
+        .progress-bar-item {
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .progress-bar-percent {
+            color: #1976d2;
+            font-weight: 700;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            border-radius: 3px;
+            animation: expandBar 1.2s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes expandBar {
+            from {
+                width: 0 !important;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .insights-progress-section {
+                grid-template-columns: 1fr;
+            }
+
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .insight-card {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <img src="img/emblem.png" alt="Government Emblem" onerror="this.style.display='none'">
+        </div>
+        <div class="header-center">
+            <!-- Title removed as per user request -->
+        </div>
+        <div class="header-right">
+            <a href="../smc_admin_dashboard.html" class="nav-btn">System Control Network Visualization</a>
+            <img src="img/jjm-logo.png" alt="Jal Jeevan Mission Logo" onerror="this.style.display='none'">
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <!-- Sidebar removed as per user request -->
+
+        <!-- Content Area -->
+        <div class="content">
+            <div class="content-wrapper">
+                <!-- Left Panel - Map -->
+                <div class="left-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span style="color: #ff9800;">Tap water supply in households (HHs) |</span>
+                            <span class="district">Solapur (Maharashtra)</span>
+                        </div>
+                        <div class="date-badge" id="dateBadge">As on ...</div>
+                    </div>
+
+                    <div class="map-container">
+                        <a href="page2.html">
+                            <img src="img/solapur_map_v2.png" alt="Solapur District Map">
+                        </a>
+                    </div>
+
+                    <!-- Rural Tap Water Supply Status Section -->
+                    <div class="rural-status-section" id="ruralStatusSection">
+                        <div class="rural-status-header">
+                            <div class="rural-status-title-group">
+                                <h3>Madha Taluka (Solapur)</h3>
+                                <h2>Status of Tap Water Supply in Rural Homes</h2>
+                            </div>
+                            <span class="source-badge">Source: Jal Jeevan Mission (Indicative Data)</span>
+                        </div>
+
+                        <!-- Top Metrics -->
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Total Households (HHs)</div>
+                                <div class="metric-value blue" id="totalHH">0</div>
+                                <div class="metric-sublabel">Registered HHs</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">HHs with Tap Water Connections</div>
+                                <div class="metric-value green" id="tapConnections">0</div>
+                                <div class="metric-sublabel">Achieved Coverage</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Remaining Households</div>
+                                <div class="metric-value orange" id="remainingHH">0</div>
+                                <div class="metric-sublabel">Pending Focus</div>
+                            </div>
+                        </div>
+
+                        <!-- Coverage and Scale -->
+                        <div class="secondary-metrics">
+                            <div class="coverage-meter-card">
+                                <div class="radial-progress" id="radialProgress" style="--progress: 0%">
+                                    <span class="radial-value" id="radialValue">0%</span>
+                                </div>
+                                <div class="progress-bars-container">
+                                    <div class="progress-item">
+                                        <div class="progress-label-group">
+                                            <span>Current Tap Water Coverage</span>
+                                            <span id="coverageLabel">0%</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div class="progress-fill green" id="coverageFill"></div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-item">
+                                        <div class="progress-label-group">
+                                            <span>Provided since Mission Launch</span>
+                                            <span id="sinceLaunchLabel">0%</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div class="progress-fill" id="sinceLaunchFill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Administrative Status Cards -->
+                        <div class="status-cards-row">
+                            <div class="hgj-mini-card pink"
+                                title="Reported = data submitted | Certified = JJM verified">
+                                <div class="hgj-mini-title">Blocks</div>
+                                <div class="hgj-mini-stats">
+                                    <div class="hgj-mini-stat">Total: <b id="blocksTotal">0</b></div>
+                                    <div class="hgj-mini-stat">Reported: <b id="blocksReported">0</b></div>
+                                    <div class="hgj-mini-stat">Certified: <b id="blocksCertified">0</b></div>
+                                </div>
+                            </div>
+                            <div class="hgj-mini-card blue"
+                                title="Reported = data submitted | Certified = JJM verified">
+                                <div class="hgj-mini-title">Panchayats</div>
+                                <div class="hgj-mini-stats">
+                                    <div class="hgj-mini-stat">Total: <b id="panchayatsTotal">0</b></div>
+                                    <div class="hgj-mini-stat">Reported: <b id="panchayatsReported">0</b></div>
+                                    <div class="hgj-mini-stat">Certified: <b id="panchayatsCertified">0</b></div>
+                                </div>
+                            </div>
+                            <div class="hgj-mini-card green"
+                                title="Reported = data submitted | Certified = JJM verified">
+                                <div class="hgj-mini-title">Villages</div>
+                                <div class="hgj-mini-stats">
+                                    <div class="hgj-mini-stat">Total: <b id="villagesTotal">0</b></div>
+                                    <div class="hgj-mini-stat">Reported: <b id="villagesReported">0</b></div>
+                                    <div class="hgj-mini-stat">Certified: <b id="villagesCertified">0</b></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- District Progress Chart removed as per user request -->
+                </div>
+
+                <!-- Right Panel - Stats -->
+                <div class="right-panel">
+                    <!-- Citizen Corner -->
+                    <div class="citizen-corner">
+                        <h3>Citizen Corner:</h3>
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text"
+                                placeholder="Know status of JJM implementation in your village: Select State -> District-> Village">
+                            <img src="img/water-quality.png" alt="Water Quality" class="water-quality-icon"
+                                onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                    <!-- Status Card -->
+                    <div class="status-card">
+                        <h3><span class="district">Solapur (Maharashtra)</span> |</h3>
+                        <h2>Status of tap water supply in rural homes</h2>
+
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Total number<br>of<br>households (HHs)</div>
+                                <div class="stat-value brown">5,77,245</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Households with<br>tap water connections<br>as on 15 Aug 2019
+                                </div>
+                                <div class="stat-value green">2,15,657</div>
+                                <div class="stat-percentage">(37.36%)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Remaining<br>households</div>
+                                <div class="stat-value blue">3,61,588</div>
+                            </div>
+                        </div>
+
+                        <div class="bottom-stats">
+                            <div class="bottom-stat">
+                                <div class="bottom-stat-label">Households provided with tap water<br>connection since
+                                    launch<br>of the Mission</div>
+                                <div class="bottom-stat-value blue">3,61,011</div>
+                                <div class="stat-percentage">(99.84%)</div>
+                            </div>
+                            <div class="bottom-stat">
+                                <div class="bottom-stat-label">Households with tap water connections<br>as on date<br>=0
+                                </div>
+                                <div class="bottom-stat-value green">5,76,668</div>
+                                <div class="stat-percentage">( 99.90% )</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Har Ghar Jal Status -->
+                    <div class="hgj-status">
+                        <h3>Har Ghar Jal Status <span class="info-icon">ℹ️</span></h3>
+
+                        <div class="hgj-grid">
+                            <!-- Blocks -->
+                            <div class="hgj-card pink">
+                                <div class="hgj-card-title">Blocks</div>
+                                <div class="hgj-card-count">11</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Reported <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">6</div>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Certified <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panchayats -->
+                            <div class="hgj-card blue">
+                                <div class="hgj-card-title">Panchayats</div>
+                                <div class="hgj-card-count">1,022</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Reported <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">1,010</div>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Certified <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">587</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Villages -->
+                            <div class="hgj-card green">
+                                <div class="hgj-card-title">Villages</div>
+                                <div class="hgj-card-count">1,128</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Reported <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">1,116</div>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <div class="hgj-stat-label">Certified <span class="info-icon">ℹ️</span></div>
+                                        <div class="hgj-stat-value">650</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Insights & Progress Section (Full Width) -->
+            <div class="insights-progress-section" id="insightsProgressSection">
+                <!-- Left: Key Insights & Trends -->
+                <div class="insights-container">
+                    <div class="insights-header">
+                        <h3>📊 Key Insights & Trends</h3>
+                    </div>
+                    <div class="insights-grid">
+                        <!-- Highest Coverage Taluka -->
+                        <div class="insight-card highest-coverage">
+                            <div class="insight-icon">🏆</div>
+                            <div class="insight-content">
+                                <div class="insight-label">Highest Coverage Taluka</div>
+                                <div class="insight-main">Barshi</div>
+                                <div class="insight-stat">95.8% HHs with tap water</div>
+                            </div>
+                        </div>
+
+                        <!-- Lowest Coverage Taluka -->
+                        <div class="insight-card lowest-coverage">
+                            <div class="insight-icon">⚠️</div>
+                            <div class="insight-content">
+                                <div class="insight-label">Lowest Coverage Taluka</div>
+                                <div class="insight-main">Malshiras</div>
+                                <div class="insight-stat">82.3% HHs with tap water</div>
+                            </div>
+                        </div>
+
+                        <!-- Most Improved -->
+                        <div class="insight-card most-improved">
+                            <div class="insight-icon">📈</div>
+                            <div class="insight-content">
+                                <div class="insight-label">Most Improved (30 Days)</div>
+                                <div class="insight-main">Indapur</div>
+                                <div class="insight-stat">+4.2% improvement</div>
+                            </div>
+                        </div>
+
+                        <!-- Critical Focus Area -->
+                        <div class="insight-card critical-area">
+                            <div class="insight-icon">🎯</div>
+                            <div class="insight-content">
+                                <div class="insight-label">Critical Focus Area</div>
+                                <div class="insight-main">Remote Villages</div>
+                                <div class="insight-stat">1,250 HHs pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Water Supply Progress Snapshot -->
+                <div class="progress-snapshot-container">
+                    <div class="snapshot-header">
+                        <h3>💧 Water Supply Progress</h3>
+                    </div>
+
+                    <!-- Donut Chart -->
+                    <div class="snapshot-content">
+                        <div class="donut-chart-wrapper">
+                            <svg class="donut-chart" viewBox="0 0 120 120">
+                                <!-- Background circle -->
+                                <circle cx="60" cy="60" r="45" fill="none" stroke="#e2e8f0" stroke-width="10"></circle>
+                                <!-- Progress circle (99.05%) -->
+                                <circle class="donut-progress" cx="60" cy="60" r="45" fill="none" stroke="#10b981"
+                                    stroke-width="10" stroke-dasharray="282.2 285.5" stroke-dashoffset="0"
+                                    stroke-linecap="round" transform="rotate(-90 60 60)"></circle>
+                                <!-- Center text -->
+                                <text x="60" y="55" text-anchor="middle" font-size="18" font-weight="bold"
+                                    fill="#1e293b">99.05%</text>
+                                <text x="60" y="70" text-anchor="middle" font-size="12" fill="#64748b">Covered</text>
+                            </svg>
+                        </div>
+
+                        <div class="progress-legend">
+                            <div class="legend-item covered">
+                                <span class="legend-dot"></span>
+                                <span class="legend-label">
+                                    <div>Covered HHs</div>
+                                    <div class="legend-value">61,860</div>
+                                </span>
+                            </div>
+                            <div class="legend-item remaining">
+                                <span class="legend-dot"></span>
+                                <span class="legend-label">
+                                    <div>Remaining HHs</div>
+                                    <div class="legend-value">592</div>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Taluka Progress Bars -->
+                        <div class="taluka-progress">
+                            <div class="progress-bar-item">
+                                <div class="progress-bar-label">
+                                    <span>Barshi</span>
+                                    <span class="progress-bar-percent">95.8%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 95.8%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-bar-item">
+                                <div class="progress-bar-label">
+                                    <span>Indapur</span>
+                                    <span class="progress-bar-percent">93.2%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 93.2%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-bar-item">
+                                <div class="progress-bar-label">
+                                    <span>Malshiras</span>
+                                    <span class="progress-bar-percent">82.3%</span>
+                                </div>
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 82.3%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section (Full Width) -->
+            <!-- Table Section (Replaces Progress Graph) -->
+
+            <!-- Script to Generate Zone Data -->
+            <script>
+                // Data generation for 13 Zones
+                // Each zone has 3 DMAs, Each DMA has 3-4 Areas
+
+                const zoneNames = [
+                    "Zone 1 - Central", "Zone 2 - North", "Zone 3 - South",
+                    "Zone 4 - East", "Zone 5 - West", "Zone 6 - Industrial",
+                    "Zone 7 - R. A", "Zone 8 - R. B", "Zone 9 - Commercial",
+                    "Zone 10 - Hospital", "Zone 11 - School", "Zone 12 - Market", "Zone 13 - Tail End"
+                ];
+
+                // Helper to generate fake area names based on Zone
+                function getAreas(zoneIdx, dmaIdx) {
+                    const count = 3 + (dmaIdx % 2); // 3 or 4 areas
+                    const areas = [];
+                    const prefixes = ["Nagar", "Colony", "Park", "Street", "Lane", "Road", "Society", "Complex"];
+                    const bases = ["Ganesh", "Shivaji", "Sai", "Krishna", "Ambedkar", "Gandhi", "Nehru", "Modi", "Patel", "Indira"];
+
+                    for (let i = 0; i < count; i++) {
+                        const base = bases[(zoneIdx + dmaIdx + i) % bases.length];
+                        const suffix = prefixes[(zoneIdx * i) % prefixes.length];
+                        areas.push(`${base} ${suffix}`);
+                    }
+                    return areas;
+                }
+
+                // Blue shades palette (Light to Dark)
+                const bluePalette = [
+                    '#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6', '#42a5f5',
+                    '#2196f3', '#1e88e5', '#1976d2', '#1565c0', '#0d47a1',
+                    '#82b1ff', '#448aff', '#2979ff', '#2962ff'
+                ];
+
+                function getRandomColor() {
+                    return bluePalette[Math.floor(Math.random() * bluePalette.length)];
+                }
+
+                function getTextColor(hexColor) {
+                    // Simple logic: if color is dark (last 5 in palette), use white text
+                    const darkColors = ['#1565c0', '#0d47a1', '#2962ff', '#1976d2', '#2979ff', '#1e88e5'];
+                    return darkColors.includes(hexColor) ? '#ffffff' : '#000000';
+                }
+
+                // --- Madha Taluka Jal Jeevan Mission Data ---
+                // Replace with live Jal Jeevan Mission API when available
+                const madhaJalJeevanStats = {
+                    location: "Madha Taluka (Solapur, Maharashtra)",
+                    totalHH: 62452,
+                    tapConnections: 61860,
+                    remainingHH: 592,
+                    coveragePercent: 99.05,
+                    providedSinceLaunchPercent: 98.65,
+                    stats: {
+                        blocks: { total: 1, reported: 1, certified: 1 },
+                        panchayats: { total: 95, reported: 92, certified: 78 },
+                        villages: { total: 118, reported: 116, certified: 94 }
+                    }
+                };
+
+                function animateValue(id, start, end, duration) {
+                    const obj = document.getElementById(id);
+                    if (!obj) return;
+                    let startTimestamp = null;
+                    const step = (timestamp) => {
+                        if (!startTimestamp) startTimestamp = timestamp;
+                        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                        const value = Math.floor(progress * (end - start) + start);
+                        obj.innerHTML = value.toLocaleString();
+                        if (progress < 1) {
+                            window.requestAnimationFrame(step);
+                        }
+                    };
+                    window.requestAnimationFrame(step);
+                }
+
+                function initMadhaStats() {
+                    const section = document.getElementById('ruralStatusSection');
+                    if (!section) return;
+
+                    const observerOptions = {
+                        threshold: 0.2
+                    };
+
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                section.classList.add('visible');
+
+                                // Animate Metrics
+                                animateValue("totalHH", 0, madhaJalJeevanStats.totalHH, 1500);
+                                animateValue("tapConnections", 0, madhaJalJeevanStats.tapConnections, 1500);
+                                animateValue("remainingHH", 0, madhaJalJeevanStats.remainingHH, 1500);
+
+                                // Administrative stats
+                                animateValue("blocksTotal", 0, madhaJalJeevanStats.stats.blocks.total, 1000);
+                                animateValue("blocksReported", 0, madhaJalJeevanStats.stats.blocks.reported, 1000);
+                                animateValue("blocksCertified", 0, madhaJalJeevanStats.stats.blocks.certified, 1000);
+
+                                animateValue("panchayatsTotal", 0, madhaJalJeevanStats.stats.panchayats.total, 1200);
+                                animateValue("panchayatsReported", 0, madhaJalJeevanStats.stats.panchayats.reported, 1200);
+                                animateValue("panchayatsCertified", 0, madhaJalJeevanStats.stats.panchayats.certified, 1200);
+
+                                animateValue("villagesTotal", 0, madhaJalJeevanStats.stats.villages.total, 1400);
+                                animateValue("villagesReported", 0, madhaJalJeevanStats.stats.villages.reported, 1400);
+                                animateValue("villagesCertified", 0, madhaJalJeevanStats.stats.villages.certified, 1400);
+
+                                // Animate Bars & Radial
+                                setTimeout(() => {
+                                    const coverageFill = document.getElementById('coverageFill');
+                                    const sinceLaunchFill = document.getElementById('sinceLaunchFill');
+                                    const radialProgress = document.getElementById('radialProgress');
+
+                                    if (coverageFill) coverageFill.style.width = madhaJalJeevanStats.coveragePercent + '%';
+                                    if (sinceLaunchFill) sinceLaunchFill.style.width = madhaJalJeevanStats.providedSinceLaunchPercent + '%';
+
+                                    document.getElementById('coverageLabel').innerText = madhaJalJeevanStats.coveragePercent + '%';
+                                    document.getElementById('sinceLaunchLabel').innerText = madhaJalJeevanStats.providedSinceLaunchPercent + '%';
+
+                                    if (radialProgress) {
+                                        radialProgress.style.setProperty('--progress', madhaJalJeevanStats.coveragePercent + '%');
+                                        document.getElementById('radialValue').innerText = madhaJalJeevanStats.coveragePercent + '%';
+                                    }
+                                }, 300);
+
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, observerOptions);
+
+                    observer.observe(section);
+                }
+
+
+                // Run on load
+                window.addEventListener('load', () => {
+                    updateDateBadge();
+                    initMadhaStats();
+                    initInsightsAnimation();
+                });
+
+                // Dynamic Date Badge
+                function updateDateBadge() {
+                    const dateBadge = document.getElementById('dateBadge');
+                    if (dateBadge) {
+                        const now = new Date();
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        const month = months[now.getMonth()];
+                        const year = now.getFullYear();
+                        dateBadge.textContent = `As on ${day} ${month} ${year}`;
+                    }
+                }
+
+                // Initialize Insights Section Animation
+                function initInsightsAnimation() {
+                    const insightsSection = document.getElementById('insightsProgressSection');
+                    if (!insightsSection) return;
+
+                    const observerOptions = {
+                        threshold: 0.3
+                    };
+
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                insightsSection.classList.add('visible');
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, observerOptions);
+
+                    observer.observe(insightsSection);
+                }
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

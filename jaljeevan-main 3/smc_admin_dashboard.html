@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMC Smart Water Management System - Admin Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      /* Palette - Calm Slate/Blue Theme */
+      --bg: #0f172a;
+      /* Slate 900 */
+      --bg-gradient: linear-gradient(180deg, #0f172a 0%, #172033 100%);
+
+      --card-bg: rgba(30, 41, 59, 0.70);
+      /* Slate 800 with opacity */
+      --card-border: 1px solid rgba(148, 163, 184, 0.1);
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+
+      --text-main: #e2e8f0;
+      /* Slate 200 */
+      --text-muted: #94a3b8;
+      /* Slate 400 */
+
+      /* Accents - Muted, Professional */
+      --accent-primary: #38bdf8;
+      /* Sky 400 */
+      --accent-secondary: #0ea5e9;
+      /* Sky 500 */
+
+      --status-ok: #10b981;
+      /* Emerald 500 */
+      --status-warn: #f59e0b;
+      /* Amber 500 */
+      --status-critical: #ef4444;
+      /* Red 500 */
+      --status-info: #3b82f6;
+      /* Blue 500 */
+
+      --font-heading: 'Orbitron', sans-serif;
+      --font-ui: 'Rajdhani', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.2);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.4);
+    }
+
+    /* Top Header */
+    .top-header {
+      background: #ffffff;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .header-main h1 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--text-main);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-shadow: none;
+    }
+
+    .header-main .subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-left: 4px;
+      font-weight: 500;
+      opacity: 1;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+    }
+
+    .user-info .avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .user-info .name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-main);
+    }
+
+    .user-info .role {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: block;
+      /* Make role visible for pro feel */
+    }
+
+    /* Live Stats Bar - Clean Strip */
+    .live-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1px;
+      background: rgba(15, 23, 42, 0.4);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      padding: 0;
+    }
+
+    .stat-card {
+      padding: 12px 16px;
+      text-align: left;
+      border-right: 1px solid rgba(255, 255, 255, 0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      /* Prevent overflow */
+    }
+
+    .stat-card .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-card .value {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--text-main);
+      text-shadow: none;
+      /* Removed glow */
+    }
+
+    /* Semantic Colors for Stats */
+    .value.cyan {
+      color: var(--accent-primary);
+    }
+
+    .value.green {
+      color: var(--status-ok);
+    }
+
+    .value.orange {
+      color: var(--status-warn);
+    }
+
+    .value.red {
+      color: var(--status-critical);
+    }
+
+    .value.purple {
+      color: #a78bfa;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-layout {
+      display: grid;
+      /* Define Areas clearly to reorder DOM elements visually if needed */
+      grid-template-areas: "controls viz stats";
+      grid-template-columns: 280px 1fr 340px;
+      gap: 20px;
+      padding: 24px;
+      flex: 1;
+      height: calc(100vh - 120px);
+      max-width: 100%;
+    }
+
+    @media (max-width: 1400px) {
+      .dashboard-layout {
+        grid-template-columns: 260px 1fr;
+        grid-template-areas:
+          "controls viz"
+          "stats stats";
+        grid-template-rows: 1fr auto;
+        height: auto;
+        overflow-y: auto;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "viz"
+          "controls"
+          "stats";
+      }
+    }
+
+    /* Panel Common Styles */
+    .viz-panel,
+    .controls-panel,
+    .right-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: var(--card-border);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .viz-panel {
+      grid-area: viz;
+      padding: 20px;
+    }
+
+    .controls-panel {
+      grid-area: controls;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .right-panel {
+      grid-area: stats;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    /* Panel Headers */
+    .panel-title,
+    .viz-header h2 {
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Controls Styling */
+    .control-section {
+      margin-bottom: 24px;
+    }
+
+    .control-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-section h4 {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: var(--text-main);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--text-main);
+    }
+
+    .btn.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .btn.success {
+      border-color: rgba(16, 185, 129, 0.5);
+      color: var(--status-ok);
+    }
+
+    .btn.success:hover {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--status-ok);
+    }
+
+    .btn.danger {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: var(--status-critical);
+    }
+
+    .btn.danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--status-critical);
+    }
+
+    /* Inputs/Selects */
+    .zone-select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 6px;
+      padding: 10px;
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .zone-select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    /* Visualization Canvas */
+    #vizCanvas {
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 23, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Legend */
+    .legend-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 16px;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      backdrop-filter: none;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .legend-color {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      box-shadow: none;
+    }
+
+    .bg-cyan {
+      background: var(--accent-primary);
+    }
+
+    .bg-green {
+      background: var(--status-ok);
+    }
+
+    .bg-purple {
+      background: #a78bfa;
+    }
+
+    .bg-orange {
+      background: var(--status-warn);
+    }
+
+    .bg-red {
+      background: var(--status-critical);
+    }
+
+    .bg-blue {
+      background: #3b82f6;
+    }
+
+    .bg-indigo {
+      background: #6366f1;
+    }
+
+    /* View Mode Toggles */
+    .view-mode {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px;
+      border-radius: 6px;
+    }
+
+    .view-mode button {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 4px;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .view-mode button.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    .view-mode button:hover:not(.active) {
+      color: var(--text-main);
+    }
+
+    /* Alert Items */
+    .alert-item {
+      padding: 12px;
+      margin-bottom: 8px;
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(148, 163, 184, 0.05);
+      border-left: 3px solid var(--status-critical);
+      /* Default critical */
+      border-radius: 4px;
+    }
+
+    .alert-item.warning {
+      border-left-color: var(--status-warn);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .alert-item.info {
+      border-left-color: var(--status-info);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .alert-item .time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .alert-item .msg {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    /* Metric Rows */
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      font-size: 0.85rem;
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-row .label {
+      color: var(--text-muted);
+    }
+
+    .metric-row .value {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .metric-row .value.ok {
+      color: var(--status-ok);
+    }
+
+    .metric-row .value.warn {
+      color: var(--status-warn);
+    }
+
+    .metric-row .value.critical {
+      color: var(--status-critical);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+
+    .tooltip.active {
+      display: block;
+    }
+
+    /* Animations */
+    @keyframes flowWater {
+      to {
+        stroke-dashoffset: -20;
+      }
+    }
+
+    .water-flow {
+      animation: flowWater 1s linear infinite;
+      stroke-dasharray: 10 5;
+    }
+
+    .water-flow-fast {
+      animation: flowWater 0.5s linear infinite;
+      stroke-dasharray: 10 5;
+    }
+
+    .water-flow-slow {
+      animation: flowWater 2s linear infinite;
+      stroke-dasharray: 10 5;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Subtle breath for sensors */
+    .pulse {
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* Soft blink */
+    .blink {
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .rotating {
+      animation: rotate 4s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes alertFlash {
+
+      0%,
+      100% {
+        fill: #ef4444;
+        opacity: 1;
+      }
+
+      50% {
+        fill: #b91c1c;
+        opacity: 0.7;
+      }
+    }
+
+    .alert-flash {
+      animation: alertFlash 2s ease-in-out infinite;
+    }
+
+
+    /* ==========================================================================
+       FINAL UNIFIED GOVERNMENT THEME & LAYOUT STABILIZATION
+       Core Goal: Visual Consistency with Main Website + Absolute Stability
+       ========================================================================== */
+
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: 1px solid #e2e8f0;
+      --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+
+      --text-main: #111827;
+      /* Gray 900 */
+      --text-secondary: #4b5563;
+      /* Gray 600 */
+      --text-muted: #9ca3af;
+      /* Gray 400 */
+
+      --accent-primary: #2563eb;
+      /* Blue 600 */
+      --accent-hover: #1d4ed8;
+      /* Blue 700 */
+
+      --status-ok: #059669;
+      /* Emerald 600 */
+      --status-warn: #d97706;
+      /* Amber 600 */
+      --status-critical: #dc2626;
+      /* Red 600 */
+      --status-info: #3b82f6;
+      /* Blue 500 */
+
+      /* Typography - Clean, Professional, System-like */
+      --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'ui-monospace', 'SFMono-Regular', 'Menlo', monospace;
+    }
+
+    /* 1. LAYOUT STABILIZATION (CRITICAL - FINAL FIX) */
+
+    /* Lock the main dashboard grid */
+    /* Lock the main dashboard grid */
+    /* Lock the main dashboard grid */
+    .dashboard-layout {
+      display: grid !important;
+      /* Ensure grid is active */
+      flex: 1 !important;
+      /* Fill remaining vertical space */
+      grid-template-columns: 55fr 25fr 20fr !important;
+      /* 55% Viz, 25% Controls, 20% Alerts */
+      grid-template-rows: 100% !important;
+      /* Force full height */
+      overflow: hidden !important;
+      gap: 16px !important;
+      /* Clean spacing */
+      padding: 16px 20px !important;
+    }
+
+    /* Viz Panel: Relative anchor, rigid size (LEFT COLUMN) */
+    .viz-panel {
+      grid-column: 1 !important;
+      /* Force Left Position */
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+      border-radius: 8px !important;
+    }
+
+    /* Controls Panel (CENTER COLUMN) */
+    .controls-panel {
+      grid-column: 2 !important;
+      /* Force Center Position */
+      height: 100% !important;
+      min-height: 0 !important;
+      overflow-y: auto !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border-radius: 8px !important;
+    }
+
+    /* Right Panel (RIGHT COLUMN) */
+    .right-panel {
+      grid-column: 3 !important;
+      /* Force Right Position */
+      height: 100% !important;
+      min-height: 0 !important;
+      overflow-y: auto !important;
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border-radius: 8px !important;
+    }
+
+    .viz-header {
+      flex: 0 0 auto !important;
+      z-index: 10 !important;
+      background: rgba(255, 255, 255, 1) !important;
+      border-bottom: 2px solid #e2e8f0 !important;
+      padding: 16px 24px !important;
+      min-height: 60px !important;
+      max-height: 60px !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    #vizCanvas {
+      position: absolute !important;
+      top: 60px !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: calc(100% - 60px) !important;
+      background: #f9fafb !important;
+      z-index: 1 !important;
+      pointer-events: all !important;
+    }
+
+    /* 2. UI POLISH (UNIFIED THEME) */
+
+    /* Global */
+    body {
+      background: var(--bg) !important;
+      color: var(--text-main) !important;
+      font-family: var(--font-ui) !important;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Typography Overrides */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .panel-title,
+    .viz-header h2 {
+      font-family: var(--font-heading) !important;
+      letter-spacing: -0.01em !important;
+      /* Modern tight spacing */
+      text-transform: none !important;
+      /* Remove sci-fi caps */
+    }
+
+    .panel-title,
+    .viz-header h2 {
+      color: var(--text-main) !important;
+      font-weight: 600 !important;
+      font-size: 1rem !important;
+      border-bottom: none !important;
+      margin: 0 !important;
+    }
+
+    /* Live Stats Strip */
+    /* Live Stats - Floating Cards Redesign */
+    .live-stats {
+      background: transparent !important;
+      border-bottom: none !important;
+      display: flex !important;
+      gap: 16px !important;
+      padding: 16px 20px !important;
+      overflow-x: auto !important;
+    }
+
+    .stat-card {
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      border-right: 1px solid #e5e7eb !important;
+      /* Override previous rule */
+      border-radius: 10px !important;
+      padding: 16px 20px !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+      flex: 1 !important;
+      min-width: 140px !important;
+      display: flex !important;
+      flex-direction: column-reverse !important;
+      /* Label at bottom, Value at top */
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      animation: fadeIn 0.8s ease-out forwards;
+      opacity: 0;
+      /* Star hidden for animation */
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+      border-color: #cbd5e1 !important;
+    }
+
+    .stat-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .stat-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .stat-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .stat-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .stat-card:nth-child(5) {
+      animation-delay: 0.5s;
+    }
+
+    .stat-card:nth-child(6) {
+      animation-delay: 0.6s;
+    }
+
+    .stat-card:nth-child(7) {
+      animation-delay: 0.7s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stat-card .label {
+      font-family: var(--font-ui) !important;
+      color: var(--text-secondary) !important;
+      font-weight: 500 !important;
+      font-size: 0.75rem !important;
+      margin-top: 4px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    .stat-card .value {
+      color: var(--text-main) !important;
+      font-family: var(--font-heading) !important;
+      font-weight: 700 !important;
+      font-size: 1.5rem !important;
+      line-height: 1.2 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Buttons */
+    .btn {
+      background: #ffffff !important;
+      color: var(--text-secondary) !important;
+      border: 1px solid #d1d5db !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+      font-family: var(--font-ui) !important;
+      font-weight: 500 !important;
+      border-radius: 6px !important;
+      text-transform: none !important;
+      /* Remove uppercase */
+      font-size: 0.9rem !important;
+      padding: 8px 16px !important;
+    }
+
+    .btn:hover {
+      background: #f9fafb !important;
+      border-color: #9ca3af !important;
+      color: var(--text-main) !important;
+    }
+
+    .btn.active {
+      background: var(--accent-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--accent-primary) !important;
+    }
+
+    /* Alerts */
+    .alert-item {
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      border-left: 4px solid var(--status-critical) !important;
+      border-radius: 6px !important;
+      box-shadow: none !important;
+      padding: 12px !important;
+    }
+
+    .alert-item.warning {
+      border-left-color: var(--status-warn) !important;
+    }
+
+    .alert-item.info {
+      border-left-color: var(--status-info) !important;
+    }
+
+    .alert-item .msg {
+      color: var(--text-main) !important;
+      font-weight: 500 !important;
+      font-family: var(--font-ui) !important;
+      font-size: 0.875rem !important;
+    }
+
+    .alert-item .time {
+      color: var(--text-muted) !important;
+      font-size: 0.75rem !important;
+    }
+
+    /* SVG Readability Fixes - Unified Style */
+    #vizCanvas svg text {
+      fill: var(--text-secondary) !important;
+      font-family: var(--font-ui) !important;
+      /* Force Inter/System font in SVG */
+      font-weight: 500 !important;
+      filter: none !important;
+      letter-spacing: normal !important;
+    }
+
+    #vizCanvas svg text[font-size="28"] {
+      fill: var(--text-main) !important;
+      font-weight: 700 !important;
+      font-size: 24px !important;
+      /* Scale down slightly */
+    }
+
+    /* Grid Lines - Very subtle */
+    #vizCanvas svg pattern path {
+      stroke: #e5e7eb !important;
+      opacity: 0.8 !important;
+    }
+
+    /* Sensor Nodes */
+    #vizCanvas svg rect[fill="#0f172a"],
+    #vizCanvas svg circle[fill="#0f172a"] {
+      fill: #ffffff !important;
+      stroke: #9ca3af !important;
+      stroke-width: 1px !important;
+    }
+
+    /* Hide Old UI */
+    .view-mode {
+      display: none !important;
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+  <!-- TOP HEADER -->
+  <div class="top-header">
+    <div class="header-main">
+      <div>
+        <h1>🌊 SMC Smart Water Management System</h1>
+        <div class="subtitle">Solapur Municipal Corporation - Administrator Dashboard</div>
+      </div>
+      <div class="user-info">
+        <div class="avatar">👤</div>
+        <div>
+          <div class="name">Admin Controller</div>
+          <div class="role">System Administrator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVE STATS -->
+  <div class="live-stats">
+    <div class="stat-card">
+      <span class="value cyan" id="totalFlow">0</span>
+      <span class="label">Total Flow (kL/h)</span>
+    </div>
+    <div class="stat-card">
+      <span class="value green" id="activeZones">0</span>
+      <span class="label">Active Zones</span>
+    </div>
+    <div class="stat-card">
+      <span class="value purple" id="avgPressure">0</span>
+      <span class="label">Avg Pressure (bar)</span>
+    </div>
+    <div class="stat-card">
+      <span class="value orange" id="activeSensors">0</span>
+      <span class="label">Sensors Online</span>
+    </div>
+    <div class="stat-card">
+      <span class="value red" id="activeAlerts">0</span>
+      <span class="label">Active Alerts</span>
+    </div>
+    <div class="stat-card">
+      <span class="value cyan" id="waterSaved">0</span>
+      <span class="label">Water Saved (kL)</span>
+    </div>
+    <div class="stat-card">
+      <span class="value green" id="efficiency">0</span>
+      <span class="label">Efficiency (%)</span>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD LAYOUT -->
+  <div class="dashboard-layout">
+
+    <!-- CENTER PANEL - VISUALIZATION (Moved to Left) -->
+    <div class="viz-panel" id="simulationSection">
+      <div class="viz-header">
+        <h2>🗺️ Real-Time Network Visualization</h2>
+
+      </div>
+      <div id="vizCanvas"></div>
+      <!-- LEGEND -->
+      <div class="legend-container">
+        <div class="legend-item">
+          <div class="legend-color bg-cyan"></div>Water Flow
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-green"></div>Flow Sensor
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-purple"></div>Pressure Sensor
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-orange"></div>Ultrasonic Sensor
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-red"></div>Automatic Valve
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-blue"></div>Arduino Controller
+        </div>
+        <div class="legend-item">
+          <div class="legend-color bg-indigo"></div>OLED Display
+        </div>
+      </div>
+    </div>
+
+    <!-- LEFT PANEL - CONTROLS (Moved to Center) -->
+    <div class="controls-panel">
+      <div class="panel-title">🎛️ System Controls</div>
+
+      <div class="control-section">
+        <h4>Master Control</h4>
+        <button class="btn active" id="btnFlow" onclick="toggleFlow()">
+          <span>⏸</span> Pause All Flow
+        </button>
+        <button class="btn success" id="btnOptimize" onclick="optimizePressure()">
+          <span>⚡</span> Auto-Optimize Pressure
+        </button>
+        <button class="btn" onclick="balanceLoad()">
+          <span>⚖️</span> Balance Load Distribution
+        </button>
+      </div>
+
+      <div class="control-section">
+        <h4>Zone Management</h4>
+        <select class="zone-select" id="zoneSelect" onchange="selectZone(this.value)">
+          <option value="">Select Zone...</option>
+        </select>
+        <button class="btn" onclick="increaseZonePressure()">
+          <span>⬆️</span> Increase Zone Pressure
+        </button>
+        <button class="btn" onclick="decreaseZonePressure()">
+          <span>⬇️</span> Decrease Zone Pressure
+        </button>
+        <button class="btn danger" onclick="closeZoneValve()">
+          <span>🔒</span> Close Zone Valve
+        </button>
+        <button class="btn success" onclick="openZoneValve()">
+          <span>🔓</span> Open Zone Valve
+        </button>
+      </div>
+
+      <div class="control-section">
+        <h4>Detection & Alerts</h4>
+        <button class="btn" onclick="scanLeaks()">
+          <span>🔍</span> Scan for Leaks
+        </button>
+        <button class="btn" onclick="detectTheft()">
+          <span>🚨</span> Detect Water Theft
+        </button>
+        <button class="btn" onclick="checkPressureDrop()">
+          <span>📉</span> Check Pressure Drops
+        </button>
+        <button class="btn" onclick="verifyMeters()">
+          <span>📊</span> Verify Smart Meters
+        </button>
+      </div>
+
+      <div class="control-section">
+        <h4>Analytics & Forecast</h4>
+        <button class="btn" onclick="generateDemandForecast()">
+          <span>📈</span> Demand Forecast
+        </button>
+        <button class="btn" onclick="analyzeConsumption()">
+          <span>📊</span> Consumption Analysis
+        </button>
+        <button class="btn" onclick="generateReport()">
+          <span>📄</span> Generate Report
+        </button>
+      </div>
+
+      <div class="control-section">
+        <h4>Emergency</h4>
+        <button class="btn danger" onclick="emergencyShutdown()">
+          <span>🛑</span> Emergency Shutdown
+        </button>
+        <button class="btn success" onclick="resetSystem()">
+          <span>🔄</span> Reset System
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL - ANALYTICS -->
+    <div class="right-panel">
+      <div class="panel-title">📊 Live Analytics & Alerts</div>
+
+      <div class="control-section">
+        <h4>🚨 Active Alerts</h4>
+        <div id="alertsContainer"></div>
+      </div>
+
+
+    </div>
+
+  </div>
+
+  <!-- TOOLTIP -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    // ============================================
+    // SYSTEM STATE
+    // ============================================
+    let systemState = {
+      flowActive: true,
+      selectedZone: null,
+      zones: [],
+      alerts: [],
+      metrics: {
+        totalFlow: 0,
+        activeZones: 0,
+        avgPressure: 0,
+        activeSensors: 0,
+        activeAlerts: 0,
+        waterSaved: 0,
+        efficiency: 95
+      }
+    };
+
+    // ============================================
+    // ZONE DATA
+    // ============================================
+    const zoneConfigs = [
+      { id: 1, valveStatus: 'open', name: "Zone 1 - Central", elevation: "low", houses: 850, pressure: 3.8, flow: 1200, status: "ok", issues: [] },
+      { id: 2, valveStatus: 'open', name: "Zone 2 - North", elevation: "high", houses: 650, pressure: 2.1, flow: 980, status: "warning", issues: ["Low Pressure"] },
+      { id: 3, valveStatus: 'open', name: "Zone 3 - South", elevation: "low", houses: 920, pressure: 3.5, flow: 1350, status: "ok", issues: [] },
+      { id: 4, valveStatus: 'open', name: "Zone 4 - East", elevation: "medium", houses: 780, pressure: 3.2, flow: 1150, status: "ok", issues: [] },
+      { id: 5, valveStatus: 'open', name: "Zone 5 - West", elevation: "high", houses: 580, pressure: 2.3, flow: 850, status: "warning", issues: ["Low Pressure"] },
+      { id: 6, valveStatus: 'open', name: "Zone 6 - Industrial", elevation: "low", houses: 120, pressure: 4.2, flow: 2200, status: "ok", issues: [] },
+      { id: 7, valveStatus: 'open', name: "Zone 7 - Residential A", elevation: "medium", houses: 1200, pressure: 3.0, flow: 1800, status: "ok", issues: [] },
+      { id: 8, valveStatus: 'open', name: "Zone 8 - Residential B", elevation: "high", houses: 950, pressure: 1.8, flow: 1100, status: "critical", issues: ["Very Low Pressure", "Irregular Supply"] },
+      { id: 9, valveStatus: 'open', name: "Zone 9 - Commercial", elevation: "low", houses: 320, pressure: 3.9, flow: 1550, status: "ok", issues: [] },
+      { id: 10, valveStatus: 'open', name: "Zone 10 - Hospital Area", elevation: "medium", houses: 280, pressure: 3.6, flow: 950, status: "ok", issues: [] },
+      { id: 11, valveStatus: 'open', name: "Zone 11 - School District", elevation: "medium", houses: 450, pressure: 3.1, flow: 680, status: "ok", issues: [] },
+      { id: 12, valveStatus: 'open', name: "Zone 12 - Market Area", elevation: "low", pressure: 2.5, flow: 1450, status: "alert", houses: 680, issues: ["Suspected Leak"] },
+      { id: 13, valveStatus: 'open', name: "Zone 13 - Tail End", elevation: "high", houses: 520, pressure: 1.5, flow: 620, status: "critical", issues: ["Very Low Pressure", "Unequal Distribution"] }
+    ];
+
+    systemState.zones = zoneConfigs;
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
+    function init() {
+      populateZoneSelect();
+      updateMetrics();
+      generateInitialAlerts();
+      renderVisualization();
+      startLiveUpdates();
+    }
+
+    // ============================================
+    // POPULATE ZONE SELECT
+    // ============================================
+    function populateZoneSelect() {
+      const select = document.getElementById('zoneSelect');
+      systemState.zones.forEach(zone => {
+        const opt = document.createElement('option');
+        opt.value = zone.id;
+        opt.textContent = zone.name;
+        select.appendChild(opt);
+      });
+    }
+
+    // ============================================
+    // UPDATE METRICS
+    // ============================================
+    // ============================================
+    // UPDATE METRICS (With Animation)
+    // ============================================
+    function animateValue(obj, start, end, duration, decimals = 0) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const val = progress * (end - start) + start;
+        obj.textContent = decimals === 0 ? Math.floor(val) : val.toFixed(decimals);
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          obj.textContent = decimals === 0 ? Math.floor(end) : end.toFixed(decimals);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function updateMetrics() {
+      const m = systemState.metrics;
+      m.totalFlow = systemState.zones.reduce((sum, z) => sum + z.flow, 0) / 1000;
+      m.activeZones = systemState.zones.filter(z => z.status !== 'offline').length;
+      m.avgPressure = (systemState.zones.reduce((sum, z) => sum + z.pressure, 0) / systemState.zones.length).toFixed(1);
+      m.activeSensors = systemState.zones.length * 3;
+      m.activeAlerts = systemState.alerts.length;
+      m.waterSaved = Math.floor(Math.random() * 500 + 1200);
+      m.efficiency = Math.floor(92 + Math.random() * 6);
+
+      // Animate updates
+      const update = (id, val, dec) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const start = parseFloat(el.textContent) || 0;
+          animateValue(el, start, parseFloat(val), 1000, dec);
+        }
+      };
+
+      update('totalFlow', m.totalFlow, 1);
+      update('activeZones', m.activeZones, 0);
+      update('avgPressure', m.avgPressure, 1);
+      update('activeSensors', m.activeSensors, 0);
+      update('activeAlerts', m.activeAlerts, 0);
+      update('waterSaved', m.waterSaved, 0);
+      update('efficiency', m.efficiency, 0);
+    }
+
+    // ============================================
+    // GENERATE INITIAL ALERTS
+    // ============================================
+    function generateInitialAlerts() {
+      systemState.alerts = [
+        { type: 'critical', time: '2 min ago', msg: 'Zone 8: Pressure critically low at 1.8 bar (threshold: 2.0 bar)' },
+        { type: 'critical', time: '5 min ago', msg: 'Zone 13: Irregular supply detected - tail-end areas affected' },
+        { type: 'warning', time: '12 min ago', msg: 'Zone 12: Flow-meter mismatch suggests possible leak (~150 L/h)' },
+        { type: 'warning', time: '18 min ago', msg: 'Zone 2: Elevated areas experiencing pressure drop' },
+        { type: 'info', time: '25 min ago', msg: 'Zone 5: Auto-optimization completed - pressure increased to 2.3 bar' },
+        { type: 'warning', time: '32 min ago', msg: 'Suspected unauthorized consumption in Zone 7 - investigating' }
+      ];
+      renderAlerts();
+    }
+
+    // ============================================
+    // RENDER ALERTS
+    // ============================================
+    function renderAlerts() {
+      const container = document.getElementById('alertsContainer');
+      if (systemState.alerts.length === 0) {
+        container.innerHTML = '<p style="text-align:center;opacity:0.6;font-size:0.75rem;padding:12px;">No active alerts</p>';
+        return;
+      }
+      container.innerHTML = systemState.alerts.map(alert => `
+    <div class="alert-item ${alert.type === 'warning' ? 'warning' : alert.type === 'info' ? 'info' : ''}">
+      <div class="time">${alert.time}</div>
+      <div class="msg">${alert.msg}</div>
+    </div>
+  `).join('');
+    }
+
+    // ============================================
+    // RENDER VISUALIZATION
+    // ============================================
+    function renderVisualization() {
+      const canvas = document.getElementById('vizCanvas');
+      canvas.innerHTML = `
+    <svg width="100%" height="100%" viewBox="0 0 1400 1250" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg" id="mainSvg">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0f172a" stroke-width="0.4" opacity="0.3"/>
+        </pattern>
+        <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#1e3a8a"/><stop offset="50%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>
+        </linearGradient>
+        <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#0891b2" stop-opacity="0.3"/>
+          <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#0e7490"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="3"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      
+      <rect width="1400" height="1800" fill="url(#grid)"/>
+      
+      <!-- Title (Shifted Down) -->
+      <text x="700" y="100" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="32" fill="#1e3a8a" font-weight="700" letter-spacing="1">
+        SOLAPUR MUNICIPAL CORPORATION - WATER DISTRIBUTION NETWORK
+      </text>
+      <text x="700" y="140" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="18" fill="#475569" font-weight="600">
+        Serving 10+ Lakh Citizens | Real-time IoT Monitoring | 13 Distribution Zones
+      </text>
+      
+      <!-- Main Reservoir (Shifted Down) -->
+      <g id="mainReservoir">
+        <rect x="600" y="200" width="200" height="150" rx="12" fill="url(#waterGrad)" stroke="#06b6d4" stroke-width="3" filter="url(#glow)"/>
+        <ellipse cx="700" cy="225" rx="90" ry="5" fill="#06b6d4" opacity="0.6" class="pulse"/>
+        <text x="700" y="265" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="20" fill="#06b6d4" font-weight="700">MAIN</text>
+        <text x="700" y="290" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="20" fill="#06b6d4" font-weight="700">RESERVOIR</text>
+        <text x="700" y="315" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="12" fill="#94a3b8">Capacity: 500,000 kL</text>
+        <text x="700" y="340" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="14" fill="#10b981">Level: 82% | Pressure: 4.5 bar</text>
+        
+        <!-- Sensors on reservoir -->
+        <rect x="680" y="185" width="40" height="20" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+        <circle cx="690" cy="195" r="3" fill="#f59e0b" class="pulse"/>
+        <circle cx="710" cy="195" r="3" fill="#f59e0b" class="pulse"/>
+        <text x="700" y="180" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="7" fill="#f59e0b">ULTRASONIC</text>
+      </g>
+      
+      <!-- Main Distribution Pipe -->
+      <rect x="690" y="350" width="20" height="100" rx="4" fill="url(#pipeGrad)"/>
+      <line x1="700" y1="355" x2="700" y2="445" stroke="#06b6d4" stroke-width="10" class="water-flow pulse" opacity="0.7"/>
+      
+      <!-- Flow Sensor on Main -->
+      <g transform="translate(700, 400)">
+        <rect x="-25" y="-25" width="50" height="50" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2.5" filter="url(#glow)"/>
+        <circle r="10" fill="none" stroke="#10b981" stroke-width="2"/>
+        <circle r="4" fill="#10b981" class="pulse"/>
+        <text y="-35" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="7" fill="#10b981">FS-MAIN</text>
+      </g>
+      
+      <!-- Distribution Hub -->
+      <g transform="translate(700, 460)">
+        <rect x="-70" y="-35" width="140" height="70" rx="12" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5" filter="url(#glow)"/>
+        <text text-anchor="middle" y="-8" font-family="Orbitron,sans-serif" font-size="11" fill="#06b6d4" font-weight="700">CENTRAL HUB</text>
+        <text text-anchor="middle" y="8" font-family="Rajdhani,sans-serif" font-size="8" fill="#94a3b8">Smart Distribution Controller</text>
+        <text text-anchor="middle" y="22" font-family="Share Tech Mono,monospace" font-size="7" fill="#10b981">13 Zones Active | AI-Optimized</text>
+      </g>
+      
+      <!-- Zone Network -->
+      ${renderZoneNetwork()}
+      
+    </svg>
+  `;
+    }
+
+    // ============================================
+    // RENDER ZONE NETWORK
+    // ============================================
+    function renderZoneNetwork() {
+      const hubX = 700, hubY = 460;
+      const positions = [
+        { x: 250, y: 650 }, { x: 500, y: 650 }, { x: 750, y: 650 }, { x: 1000, y: 650 }, { x: 1250, y: 650 },
+        { x: 200, y: 950 }, { x: 450, y: 950 }, { x: 700, y: 950 }, { x: 950, y: 950 }, { x: 1200, y: 950 },
+        { x: 350, y: 1250 }, { x: 700, y: 1250 }, { x: 1050, y: 1250 }
+      ];
+
+      return systemState.zones.map((zone, idx) => {
+        const pos = positions[idx];
+        const statusColor = zone.status === 'ok' ? '#10b981' :
+          zone.status === 'warning' ? '#f59e0b' :
+            zone.status === 'alert' ? '#f59e0b' : '#ef4444';
+
+        const flowClass = zone.pressure > 3 ? 'water-flow-fast' : zone.pressure > 2 ? 'water-flow' : 'water-flow-slow';
+        const isFlowing = systemState.flowActive && zone.flow > 0;
+
+        return `
+          <!-- Zone ${zone.id} -->
+          <g class="zone-group" data-zone="${zone.id}" style="cursor:pointer;" onclick="selectZoneFromViz(${zone.id})">
+            <!-- Connection pipe (Made brighter to be visible) -->
+            <path d="M ${hubX} ${hubY + 35} Q ${(hubX + pos.x) / 2} ${(hubY + pos.y) / 2} ${pos.x} ${pos.y - 30}" 
+                  fill="none" stroke="#334155" stroke-width="12" opacity="0.8"/>
+            ${isFlowing ? `<path d="M ${hubX} ${hubY + 35} Q ${(hubX + pos.x) / 2} ${(hubY + pos.y) / 2} ${pos.x} ${pos.y - 30}" 
+                  fill="none" stroke="#06b6d4" stroke-width="6" class="${flowClass}" opacity="0.8"/>` : ''}
+            
+            <!-- Flow sensor on branch -->
+            <g transform="translate(${pos.x}, ${pos.y - 50})">
+              <rect x="-20" y="-20" width="40" height="40" rx="7" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+              <circle r="8" fill="none" stroke="#10b981" stroke-width="1.5"/>
+              <circle r="3" fill="#10b981" class="pulse"/>
+              <text y="-28" text-anchor="middle" font-size="9" font-weight="700" fill="#10b981">FS-${zone.id}</text>
+            </g>
+            
+            <!-- Pressure sensor -->
+            <g transform="translate(${pos.x + 50}, ${pos.y - 20})">
+              <!-- Connector Line -->
+              <line x1="0" y1="11" x2="0" y2="20" stroke="#8b5cf6" stroke-width="2"/>
+              <circle r="11" fill="#0f172a" stroke="#8b5cf6" stroke-width="2"/>
+              <text text-anchor="middle" y="4" font-size="8" fill="#8b5cf6" font-weight="700">P</text>
+              <text y="22" text-anchor="middle" font-size="9" font-weight="700" fill="#8b5cf6">${zone.pressure}bar</text>
+            </g>
+            
+            <!-- Automatic Valve (Rotation removed) -->
+            <g transform="translate(${pos.x - 50}, ${pos.y - 10})">
+              <rect x="-16" y="-16" width="32" height="32" rx="5" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+              <circle r="10" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <text y="28" text-anchor="middle" font-size="8" font-weight="700" fill="#ef4444">VALVE</text>
+            </g>
+            
+            <!-- Zone tank -->
+            <rect x="${pos.x - 70}" y="${pos.y}" width="140" height="120" rx="10" fill="url(#waterGrad)" 
+                  stroke="${statusColor}" stroke-width="2.5" filter="url(#glow)"/>
+            <rect x="${pos.x - 66}" y="${pos.y + 35}" width="132" height="80" rx="5" fill="#0891b2" opacity="0.6"/>
+            <ellipse cx="${pos.x}" cy="${pos.y + 38}" rx="66" ry="4" fill="#06b6d4" opacity="0.5" class="pulse"/>
+            
+            <text x="${pos.x}" y="${pos.y + 45}" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="16" fill="#06b6d4" font-weight="700">Z-${zone.id}</text>
+            <text x="${pos.x}" y="${pos.y + 64}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="11" font-weight="600" fill="#94a3b8">${zone.name.split(' - ')[1]}</text>
+            <text x="${pos.x}" y="${pos.y + 82}" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="10" font-weight="700" fill="${statusColor}">${zone.flow} L/h</text>
+            <text x="${pos.x}" y="${pos.y + 96}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="9" fill="#94a3b8">${zone.houses} houses</text>
+            
+            ${zone.status === 'critical' || zone.status === 'alert' ? `
+              <circle cx="${pos.x + 55}" cy="${pos.y + 15}" r="8" fill="#ef4444" class="alert-flash"/>
+              <text x="${pos.x + 55}" y="${pos.y + 18}" text-anchor="middle" font-size="9" fill="#fff">!</text>
+            ` : ''}
+            
+            <!-- Ultrasonic on tank -->
+            <g transform="translate(${pos.x}, ${pos.y - 8})">
+              <rect x="-14" y="-9" width="28" height="18" rx="3" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+              <circle cx="-6" r="3" fill="#f59e0b" class="pulse"/>
+              <circle cx="6" r="3" fill="#f59e0b" class="pulse"/>
+            </g>
+            
+            <!-- Arduino + OLED -->
+            <g transform="translate(${pos.x - 100}, ${pos.y + 50})">
+              <!-- Connector Wire -->
+              <path d="M 45 15 L 75 15" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2 2"/>
+              <rect width="45" height="35" rx="3" fill="#0c4a6e" stroke="#3b82f6" stroke-width="1.2"/>
+              <text x="22.5" y="16" text-anchor="middle" font-size="7" fill="#3b82f6">ARD</text>
+              <circle cx="8" cy="7" r="1.5" fill="#10b981" class="blink"/>
+              <rect y="40" width="45" height="25" rx="2" fill="#000" stroke="#6366f1" stroke-width="1"/>
+              <rect x="2" y="42" width="41" height="21" fill="#001a33"/>
+              <text x="22.5" y="51" text-anchor="middle" font-size="4.5" fill="#06b6d4">Z${zone.id}</text>
+              <text x="22.5" y="57" text-anchor="middle" font-size="4" fill="#10b981">${zone.status.toUpperCase()}</text>
+            </g>
+            
+            <!-- House connections -->
+            ${[0, 1, 2].map(i => `
+              <line x1="${pos.x}" y1="${pos.y + 120}" x2="${pos.x - 35 + i * 35}" y2="${pos.y + 150}" 
+                    stroke="#1e3a8a" stroke-width="5" opacity="0.6"/>
+              ${isFlowing ? `<line x1="${pos.x}" y1="${pos.y + 120}" x2="${pos.x - 35 + i * 35}" y2="${pos.y + 150}" 
+                    stroke="#06b6d4" stroke-width="2.5" class="water-flow pulse" opacity="0.6"/>` : ''}
+              <text x="${pos.x - 35 + i * 35}" y="${pos.y + 165}" text-anchor="middle" font-size="16">🏠</text>
+            `).join('')}
+          </g>
+        `;
+      }).join('');
+    }
+
+    // ============================================
+    // SELECT ZONE
+    // ============================================
+    function selectZone(zoneId) {
+      if (!zoneId) return;
+      systemState.selectedZone = parseInt(zoneId);
+      showZoneDetails(systemState.selectedZone);
+    }
+
+    function selectZoneFromViz(zoneId) {
+      systemState.selectedZone = zoneId;
+      document.getElementById('zoneSelect').value = zoneId;
+      showZoneDetails(zoneId);
+    }
+
+    function showZoneDetails(zoneId) {
+      // Feature request: Zone details removed from UI.
+      // Logic retained for future re-enablement or console logging if needed.
+      console.log("Zone selected:", zoneId);
+    }
+
+    function updateMetricsPanel(zone) {
+      // Feature request: Metrics panel removed from UI.
+    }
+
+    // ============================================
+    // CONTROL FUNCTIONS
+    // ============================================
+    function toggleFlow() {
+      systemState.flowActive = !systemState.flowActive;
+      const btn = document.getElementById('btnFlow');
+      if (systemState.flowActive) {
+        btn.innerHTML = '<span>⏸</span> Pause All Flow';
+        btn.classList.add('active');
+      } else {
+        btn.innerHTML = '<span>▶</span> Resume All Flow';
+        btn.classList.remove('active');
+      }
+      renderVisualization();
+    }
+
+    function optimizePressure() {
+      addAlert('info', 'Just now', 'Auto-optimization initiated for all zones...');
+      setTimeout(() => {
+        systemState.zones.forEach(z => {
+          if (z.pressure < 2.5) z.pressure += 0.5;
+          if (z.status === 'critical') z.status = 'warning';
+        });
+        updateMetrics();
+        renderVisualization();
+        addAlert('info', 'Just now', 'Pressure optimization complete - average pressure increased to ' + systemState.metrics.avgPressure + ' bar');
+      }, 2000);
+    }
+
+    function balanceLoad() {
+      addAlert('info', 'Just now', 'Load balancing algorithm running...');
+      setTimeout(() => {
+        addAlert('info', 'Just now', 'Load distribution balanced across all zones');
+      }, 1500);
+    }
+
+    function increaseZonePressure() {
+      if (!systemState.selectedZone) {
+        alert('Please select a zone first');
+        return;
+      }
+      const zone = systemState.zones.find(z => z.id === systemState.selectedZone);
+      zone.pressure = Math.min(zone.pressure + 0.3, 4.5);
+      if (zone.pressure > 2.0 && zone.status === 'critical') zone.status = 'warning';
+      if (zone.pressure > 2.5 && zone.status === 'warning') zone.status = 'ok';
+      updateMetrics();
+      renderVisualization();
+      showZoneDetails(systemState.selectedZone);
+      addAlert('info', 'Just now', `Zone ${zone.id} pressure increased to ${zone.pressure.toFixed(1)} bar`);
+    }
+
+    function decreaseZonePressure() {
+      if (!systemState.selectedZone) {
+        alert('Please select a zone first');
+        return;
+      }
+      const zone = systemState.zones.find(z => z.id === systemState.selectedZone);
+      zone.pressure = Math.max(zone.pressure - 0.3, 1.0);
+      updateMetrics();
+      renderVisualization();
+      showZoneDetails(systemState.selectedZone);
+      addAlert('warning', 'Just now', `Zone ${zone.id} pressure decreased to ${zone.pressure.toFixed(1)} bar`);
+    }
+
+    function closeZoneValve() {
+      if (!systemState.selectedZone) {
+        alert('Please select a zone first');
+        return;
+      }
+      const zone = systemState.zones.find(z => z.id === systemState.selectedZone);
+      zone.valveStatus = 'closed';
+      zone.flow = 0;
+      addAlert('warning', 'Just now', `Zone ${zone.id} valve CLOSED - flow stopped`);
+      updateMetrics();
+      renderVisualization();
+      showZoneDetails(systemState.selectedZone);
+    }
+
+    function openZoneValve() {
+      if (!systemState.selectedZone) {
+        alert('Please select a zone first');
+        return;
+      }
+      const zone = systemState.zones.find(z => z.id === systemState.selectedZone);
+      zone.valveStatus = 'open';
+      zone.flow = 850 + Math.random() * 1350;
+      addAlert('info', 'Just now', `Zone ${zone.id} valve OPENED - flow resumed at ${Math.round(zone.flow)} L/h`);
+      updateMetrics();
+      renderVisualization();
+      showZoneDetails(systemState.selectedZone);
+    }
+
+    function scanLeaks() {
+      addAlert('info', 'Just now', 'Scanning all zones for leaks using flow-pressure correlation analysis...');
+      setTimeout(() => {
+        const leakZone = systemState.zones[11]; // Zone 12
+        addAlert('warning', '1 min ago', `Leak detected in Zone ${leakZone.id} - estimated loss: 150 L/h. Field team notified.`);
+      }, 3000);
+    }
+
+    function detectTheft() {
+      addAlert('info', 'Just now', 'Running theft detection algorithm (flow sensor vs smart meter comparison)...');
+      setTimeout(() => {
+        addAlert('warning', '1 min ago', 'Zone 7: Suspected unauthorized consumption - 80 L/h discrepancy detected. Investigation initiated.');
+      }, 2500);
+    }
+
+    function checkPressureDrop() {
+      addAlert('info', 'Just now', 'Analyzing pressure patterns across all distribution points...');
+      setTimeout(() => {
+        addAlert('critical', '30 sec ago', 'Zone 8 & Zone 13: Persistent low pressure in elevated areas - auto-optimization recommended');
+      }, 2000);
+    }
+
+    function verifyMeters() {
+      addAlert('info', 'Just now', 'Verifying smart meter readings across 13 zones...');
+      setTimeout(() => {
+        addAlert('info', '45 sec ago', 'Smart meter verification complete - all meters operational and accurate');
+      }, 3000);
+    }
+
+    function generateDemandForecast() {
+      addAlert('info', 'Just now', 'AI model generating 7-day demand forecast using historical data...');
+      setTimeout(() => {
+        addAlert('info', '1 min ago', 'Forecast complete: Peak demand expected at 18:00-20:00 hrs (15% increase). Auto-scheduling enabled.');
+      }, 2500);
+    }
+
+    function analyzeConsumption() {
+      addAlert('info', 'Just now', 'Analyzing consumption patterns and trends...');
+      setTimeout(() => {
+        addAlert('info', '1 min ago', 'Analysis complete: Residential zones show 12% increase in evening hours. Commercial zones stable.');
+      }, 2000);
+    }
+
+    function generateReport() {
+      addAlert('info', 'Just now', 'Generating comprehensive system report...');
+      setTimeout(() => {
+        addAlert('info', '30 sec ago', 'Report ready: Daily summary, analytics, and recommendations generated successfully.');
+      }, 2000);
+    }
+
+    function emergencyShutdown() {
+      if (!confirm('Are you sure you want to initiate EMERGENCY SHUTDOWN? This will stop water supply to all zones.')) return;
+      systemState.flowActive = false;
+      systemState.zones.forEach(z => z.flow = 0);
+      addAlert('critical', 'Just now', '🛑 EMERGENCY SHUTDOWN ACTIVATED - All zones offline');
+      updateMetrics();
+      renderVisualization();
+      document.getElementById('btnFlow').innerHTML = '<span>▶</span> Resume All Flow';
+      document.getElementById('btnFlow').classList.remove('active');
+    }
+
+    function resetSystem() {
+      if (!confirm('Reset the entire system to normal operating parameters?')) return;
+      location.reload();
+    }
+
+    function setView(mode) {
+      document.querySelectorAll('.view-mode button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      // In full implementation, this would switch between different visualization modes
+    }
+
+    function addAlert(type, time, msg) {
+      systemState.alerts.unshift({ type, time, msg });
+      if (systemState.alerts.length > 10) systemState.alerts.pop();
+      renderAlerts();
+      updateMetrics();
+    }
+
+    // ============================================
+    // LIVE UPDATES
+    // ============================================
+    function startLiveUpdates() {
+      setInterval(() => {
+        // Simulate live pressure fluctuations
+        systemState.zones.forEach(z => {
+          const delta = (Math.random() - 0.5) * 0.1;
+          z.pressure = Math.max(1.0, Math.min(4.5, z.pressure + delta));
+          if (z.valveStatus !== 'closed') {
+            z.flow = Math.max(0, z.flow + (Math.random() - 0.5) * 50);
+          } else {
+            z.flow = 0;
+          }
+        });
+        updateMetrics();
+      }, 35000); // Slower updates (35s) as requested
+    }
+
+    // ============================================
+    // INIT ON LOAD
+    // ============================================
+    window.onload = function () {
+      init();
+
+      // Handle anchor navigation (e.g., #simulationSection)
+      if (window.location.hash) {
+        setTimeout(() => {
+          const element = document.querySelector(window.location.hash);
+          if (element) {
+            const headerOffset = 100;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 150);
+      }
+    };
+  </script>
+
+</body>
+
+</html>

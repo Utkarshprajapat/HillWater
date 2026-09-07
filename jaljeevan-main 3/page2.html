@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jal Jeevan Mission - Har Ghar Jal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left img {
+            height: 50px;
+        }
+
+        .header-right img {
+            height: 50px;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 75px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 80px;
+            background-color: #fff;
+            box-shadow: 1px 0 0 #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            position: sticky;
+            top: 75px;
+            height: calc(100vh - 75px);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .content-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .district {
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .date-badge {
+            background-color: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 500px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .map-container img {
+            max-width: 95%;
+            max-height: 95%;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .map-container img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .citizen-corner,
+        .status-card,
+        .hgj-status {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .citizen-corner h3 {
+            color: #f59e0b;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 250px;
+            gap: 2px;
+            padding-top: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #2196f3, #42a5f5);
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, #1976d2, #2196f3);
+        }
+
+        .y-axis {
+            position: absolute;
+            left: -5px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .y-axis-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .chart-footer {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .dma-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .dma-card {
+            padding: 16px;
+            border-radius: 10px;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dma-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .dma-card-title {
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding-bottom: 6px;
+            letter-spacing: 0.05em;
+        }
+
+        .dma-card-areas {
+            font-size: 12px;
+            line-height: 1.5;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 900px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .dma-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <img src="img/emblem.png" alt="Government Emblem" onerror="this.style.display='none'">
+        </div>
+        <div class="header-center">
+            <!-- Title removed as per user request -->
+        </div>
+        <div class="header-right">
+            <a href="../smc_admin_dashboard.html" class="nav-btn">System Control Network Visualization</a>
+            <img src="img/jjm-logo.png" alt="Jal Jeevan Mission Logo" onerror="this.style.display='none'">
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <!-- Sidebar removed as per user request -->
+
+        <!-- Content Area -->
+        <div class="content">
+            <div class="content-wrapper">
+                <div class="left-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span style="color: #ff9800;">Tap water supply in households (HHs) |</span>
+                            <span class="district">Madha Taluka</span>
+                        </div>
+                        <div class="date-badge" id="dateBadge">As on ...</div>
+                    </div>
+
+                    <div class="map-container">
+                        <a href="page2.html">
+                            <img src="img/madha_taluka_map.png" alt="Madha Taluka District Map">
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Stats -->
+                <div class="right-panel">
+                    <div class="citizen-corner">
+                        <h3>Citizen Corner</h3>
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Search your area...">
+                        </div>
+                    </div>
+
+                    <!-- Status Card -->
+                    <div class="status-card">
+                        <h3><span class="district">Madha Taluka</span> District Status</h3>
+                        <h2>Current Status:</h2>
+
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Total Households</div>
+                                <div class="stat-value brown">62,452</div>
+                                <div class="stat-percentage">100%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">HH with Tap Water</div>
+                                <div class="stat-value green">61,860</div>
+                                <div class="stat-percentage">99.05%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Remaining HH</div>
+                                <div class="stat-value blue">592</div>
+                                <div class="stat-percentage">0.95%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Har Ghar Jal Status -->
+                    <div class="hgj-status">
+                        <h3>Status</h3>
+
+                        <div class="hgj-grid">
+                            <!-- Blocks -->
+                            <div class="hgj-card blue">
+                                <div class="hgj-card-title">Blocks</div>
+                                <div class="hgj-card-count">11</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Reported</span>
+                                        <span class="hgj-stat-value">6</span>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Certified</span>
+                                        <span class="hgj-stat-value">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panchayats -->
+                            <div class="hgj-card blue">
+                                <div class="hgj-card-title">Panchayats</div>
+                                <div class="hgj-card-count">1,022</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Reported</span>
+                                        <span class="hgj-stat-value">1,010</span>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Certified</span>
+                                        <span class="hgj-stat-value">587</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Villages -->
+                            <div class="hgj-card green">
+                                <div class="hgj-card-title">Villages</div>
+                                <div class="hgj-card-count">1,128</div>
+                                <div class="hgj-stats">
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Reported</span>
+                                        <span class="hgj-stat-value">1,116</span>
+                                    </div>
+                                    <div class="hgj-stat">
+                                        <span class="hgj-stat-label">Certified</span>
+                                        <span class="hgj-stat-value">650</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Distribution Network Details (13 Zones Coverage) -->
+            <div class="progress-section" id="distributionTable">
+                <div class="progress-header">
+                    <h3 class="progress-title">Distribution Network Details (13 Zones Coverage)</h3>
+                </div>
+                <div class="zone-vertical-list" id="zoneVerticalList">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const zoneNames = [
+            "Zone 1 - Central", "Zone 2 - North", "Zone 3 - South",
+            "Zone 4 - East", "Zone 5 - West", "Zone 6 - Industrial",
+            "Zone 7 - R. A", "Zone 8 - R. B", "Zone 9 - Commercial",
+            "Zone 10 - Hospital", "Zone 11 - School", "Zone 12 - Market", "Zone 13 - Tail End"
+        ];
+
+        const bluePalette = [
+            '#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6', '#42a5f5',
+            '#2196f3', '#1e88e5', '#1976d2', '#1565c0', '#0d47a1',
+            '#82b1ff', '#448aff', '#2979ff', '#2962ff'
+        ];
+
+        function getTextColor(hexColor) {
+            const darkColors = ['#1565c0', '#0d47a1', '#2962ff', '#1976d2', '#2979ff', '#1e88e5'];
+            return darkColors.includes(hexColor) ? '#ffffff' : '#000000';
+        }
+
+        function getAreas(zoneIdx, dmaIdx) {
+            const count = 3 + (dmaIdx % 2);
+            const areas = [];
+            const prefixes = ["Nagar", "Colony", "Park", "Street", "Lane", "Road", "Society", "Complex"];
+            const bases = ["Ganesh", "Shivaji", "Sai", "Krishna", "Ambedkar", "Gandhi", "Nehru", "Modi", "Patel", "Indira"];
+
+            for (let i = 0; i < count; i++) {
+                const base = bases[(zoneIdx + dmaIdx + i) % bases.length];
+                const suffix = prefixes[(zoneIdx * i) % prefixes.length];
+                areas.push(`${base} ${suffix}`);
+            }
+            return areas;
+        }
+
+        function renderVerticalZones() {
+            const list = document.getElementById('zoneVerticalList');
+            if (!list) return;
+
+            let html = '';
+            zoneNames.forEach((name, zIdx) => {
+                html += `
+                    <div class="zone-row">
+                        <div class="zone-row-header">${name}</div>
+                        <div class="dma-grid">
+                            ${[1, 2, 3].map(d => {
+                    const bgColor = bluePalette[(zIdx + d) % bluePalette.length];
+                    const textColor = getTextColor(bgColor);
+                    const areas = getAreas(zIdx, d);
+                    return `
+                                    <div class="dma-card" style="background-color: ${bgColor}">
+                                        <div class="dma-card-title" style="color: ${textColor}">DMA 0${d}</div>
+                                        <div class="dma-card-areas" style="color: ${textColor}">${areas.join(', ')}</div>
+                                    </div>
+                                `;
+                }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        // Run on load
+        window.addEventListener('load', () => {
+            renderVerticalZones();
+            updateDateBadge();
+        });
+
+        // Dynamic Date Badge
+        function updateDateBadge() {
+            const dateBadge = document.getElementById('dateBadge');
+            if (dateBadge) {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const month = months[now.getMonth()];
+                const year = now.getFullYear();
+                dateBadge.textContent = `As on ${day} ${month} ${year}`;
+            }
+        }
+    </script>
+</body>
+
+</html>

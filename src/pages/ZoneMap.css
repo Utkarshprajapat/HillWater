@@ -1,0 +1,648 @@
+/* Scoped to .zone-map-page to avoid conflicts */
+.zone-map-page {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 64px);
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+.zone-map-page * {
+  box-sizing: border-box;
+}
+
+.zone-map-page .content-wrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .zone-map-page .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Panel - Map Container */
+.zone-map-page .left-panel {
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-map-page .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.zone-map-page .panel-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.zone-map-page .district {
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.zone-map-page .map-container {
+  width: 100%;
+  height: 500px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .map-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zone-map-page .map-container img:hover {
+  transform: scale(1.05);
+}
+
+/* Right Panel - Stats Cards */
+.zone-map-page .right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.zone-map-page .citizen-corner {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .citizen-corner h3 {
+  color: #f59e0b;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.zone-map-page .search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background-color: #f8fafc;
+  transition: all 0.2s;
+}
+
+.zone-map-page .search-box:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: white;
+}
+
+.zone-map-page .search-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.zone-map-page .search-icon {
+  margin-right: 12px;
+  color: #94a3b8;
+}
+
+.zone-map-page .status-card {
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .status-card h3 {
+  font-size: 13px;
+  margin-bottom: 4px;
+  color: #64748b;
+}
+
+.zone-map-page .status-card h2 {
+  color: #1e293b;
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 800;
+}
+
+.zone-map-page .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.zone-map-page .stat-item {
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+}
+
+.zone-map-page .stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.zone-map-page .stat-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.zone-map-page .stat-value.green {
+  color: #10b981;
+}
+
+.zone-map-page .stat-percentage {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.zone-map-page .hgj-status {
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .hgj-status h3 {
+  color: #f59e0b;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.zone-map-page .hgj-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.zone-map-page .hgj-card {
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid transparent;
+}
+
+.zone-map-page .hgj-card.blue {
+  background-color: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.zone-map-page .hgj-card.green {
+  background-color: #ecfdf5;
+  border-color: #d1fae5;
+}
+
+.zone-map-page .hgj-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.zone-map-page .hgj-card-count {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* Detailed Zone Table Styles from page1.html */
+.zone-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 15px;
+  padding-bottom: 10px;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #1976d2 #f1f1f1;
+}
+
+.zone-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.zone-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #1976d2;
+  border-radius: 4px;
+}
+
+.detailed-zone-table {
+  width: max-content;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.detailed-zone-table th {
+  background: linear-gradient(180deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #1565c0;
+  white-space: nowrap;
+  min-width: 250px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.detailed-zone-table td {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 15px;
+  vertical-align: top;
+  min-width: 250px;
+}
+
+.dma-block {
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.dma-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dma-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.area-list {
+  list-style-type: none;
+  padding-left: 5px;
+  margin: 0;
+}
+
+.area-item {
+  font-size: 12px;
+  padding: 2px 0;
+  position: relative;
+  padding-left: 12px;
+  white-space: nowrap;
+}
+
+.area-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+/* Progress-section containing the Zone Table */
+.zone-map-page .progress-section {
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .progress-header {
+  margin-bottom: 24px;
+}
+
+.zone-map-page .progress-title {
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Zone Table Styling */
+.zone-table-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.zone-list-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.zone-list-table thead {
+  background-color: #f8fafc;
+}
+
+.zone-list-table th {
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: left;
+}
+
+.zone-row-item {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.zone-row-item:hover {
+  background-color: #f1f5f9;
+}
+
+.zone-row-item td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.zone-id-cell {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.zone-name-cell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.zone-type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.dma-status-label {
+  font-weight: 500;
+  color: #64748b;
+}
+
+.status-pill-table {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-pill-table.normal {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-pill-table.warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-pill-table.critical {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.row-action-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.zone-row-item:hover .row-action-btn {
+  background-color: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  transform: translateX(4px);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+/* Cleanup for old vertical table styles */
+.zone-table-container,
+.zone-list-table,
+.zone-row-item,
+.status-pill-table,
+.zone-type-badge,
+.row-action-btn,
+.zone-vertical-stack,
+.zone-card-vertical {
+  display: none !important;
+}
+
+/* ===== NEW INSIGHTS & PROGRESS SECTION ===== */
+.zone-map-page .insights-progress-section {
+  display: block;
+  margin-bottom: 24px;
+}
+
+/* Insights Container */
+.zone-map-page .insights-container {
+  background-color: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.zone-map-page .insights-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 3px solid #e2e8f0;
+}
+
+.zone-map-page .insights-header h3 {
+  color: #1976d2;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.zone-map-page .insights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.zone-map-page .insight-card {
+  padding: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.zone-map-page .insight-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+}
+
+.zone-map-page .insight-card.highest-coverage {
+  background-color: #ecfdf5;
+  border-left-color: #10b981;
+}
+
+.zone-map-page .insight-card.lowest-coverage {
+  background-color: #fef2f2;
+  border-left-color: #ef4444;
+}
+
+.zone-map-page .insight-card.most-improved {
+  background-color: #eff6ff;
+  border-left-color: #3b82f6;
+}
+
+.zone-map-page .insight-card.critical-area {
+  background-color: #fef3c7;
+  border-left-color: #f59e0b;
+}
+
+.zone-map-page .insight-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.zone-map-page .insight-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.zone-map-page .insight-label {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.zone-map-page .insight-main {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.zone-map-page .insight-stat {
+  font-size: 15px;
+  color: #475569;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Progress Snapshot Container - REMOVED */
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .zone-map-page .insights-progress-section {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .zone-map-page .insights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zone-map-page .insight-card {
+    flex-direction: row;
+  }
+
+  .zone-map-page .insights-progress-section {
+    display: block;
+  }
+
+  .zone-map-page .insights-container {
+    padding: 24px;
+  }
+
+  .zone-map-page .insights-header h3 {
+    font-size: 18px;
+  }
+
+  .zone-map-page .insight-icon {
+    font-size: 28px;
+  }
+
+  .zone-map-page .insight-main {
+    font-size: 18px;
+  }
+
+  .zone-map-page .insight-label {
+    font-size: 11px;
+  }
+
+  .zone-map-page .insight-stat {
+    font-size: 14px;
+  }
+}
