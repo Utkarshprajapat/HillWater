@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import { Link } from 'react-router-dom'
 import { Mountain, Gauge, Droplets, ArrowRight, AlertTriangle, CheckCircle2 } from 'lucide-react'
@@ -20,11 +20,20 @@ function MapController({ center, zoom }) {
 const CityMap = ({ zones = [], selectedZone = null, onZoneSelect }) => {
   const [mapCenter, setMapCenter] = useState(NAINITAL_CENTER)
   const [mapZoom, setMapZoom] = useState(13)
+  const markerRefs = useRef({})
 
   useEffect(() => {
     if (selectedZone && selectedZone.lat && selectedZone.lng) {
       setMapCenter([selectedZone.lat, selectedZone.lng])
-      setMapZoom(14)
+      setMapZoom(15)
+      
+      // Auto-open popup after map pans
+      setTimeout(() => {
+        const marker = markerRefs.current[selectedZone.id]
+        if (marker) {
+          marker.openPopup()
+        }
+      }, 400)
     }
   }, [selectedZone])
 
@@ -86,6 +95,11 @@ const CityMap = ({ zones = [], selectedZone = null, onZoneSelect }) => {
           return (
             <CircleMarker
               key={zone.id}
+              ref={(ref) => {
+                if (ref) {
+                  markerRefs.current[zone.id] = ref
+                }
+              }}
               center={[lat, lng]}
               radius={isSelected ? 16 : 12}
               pathOptions={{

@@ -26,14 +26,16 @@ const INTERVENTIONS = [
 
 const WhatIfSimulator = () => {
   const { zones, applyZoneIntervention, addLog } = useData()
-  const [selectedZoneId, setSelectedZoneId] = useState('MAL')
+  const [selectedZoneId, setSelectedZoneId] = useState('')
   const [interventionType, setInterventionType] = useState('increase_pump')
   const [magnitude, setMagnitude] = useState(12)
   const [appliedFeedback, setAppliedFeedback] = useState(false)
 
+  const effectiveZoneId = selectedZoneId || (zones.length > 0 ? zones[0].id : '')
+
   const selectedZone = useMemo(() => {
-    return zones.find(z => z.id === selectedZoneId || z.name === selectedZoneId) || zones[0] || {}
-  }, [zones, selectedZoneId])
+    return zones.find(z => z.id === effectiveZoneId || z.name === effectiveZoneId) || zones[0] || {}
+  }, [zones, effectiveZoneId])
 
   const activeIntervention = useMemo(() => {
     return INTERVENTIONS.find(i => i.id === interventionType) || INTERVENTIONS[0]
@@ -89,7 +91,7 @@ const WhatIfSimulator = () => {
             Target Zone:
           </label>
           <select
-            value={selectedZoneId}
+            value={effectiveZoneId}
             onChange={(e) => {
               setSelectedZoneId(e.target.value)
               setAppliedFeedback(false)

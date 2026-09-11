@@ -8,3 +8,13 @@ node_modules/
 dist/
 .next/
 .vercel/
+
+# Environment Variables
+.env*
+!.env.example
+backend/.env*
+!backend/.env.example
+
+# Database
+backend/data/*.db
+backend/data/*.db-*

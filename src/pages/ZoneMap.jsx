@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useData } from '../context/DataContext'
 import CityMap from '../components/Dashboard/CityMap'
@@ -26,6 +26,19 @@ const ZoneMap = () => {
     z.elevation.toString().includes(searchQuery) ||
     z.terrain?.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  useEffect(() => {
+    if (searchQuery.trim() !== '' && filteredZones.length > 0) {
+      // If current selectedZone is not in the filtered results, select the first match
+      const isSelectedStillValid = filteredZones.find(z => z.id === selectedZone?.id)
+      if (!isSelectedStillValid) {
+        setSelectedZone(filteredZones[0])
+      } else if (filteredZones.length === 1) {
+        // If exactly one match, select it
+        setSelectedZone(filteredZones[0])
+      }
+    }
+  }, [searchQuery, zones])
 
   const activeZone = selectedZone || zones[0]
 

@@ -31,6 +31,12 @@ const Layout = ({ children }) => {
           onAlertsClick={() => setAlertsOpen(!alertsOpen)}
         />
 
+        {/* SIMULATED DATA BANNER */}
+        <div className="bg-amber-100 border-b border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 px-4 text-center uppercase tracking-widest z-10 shadow-sm flex items-center justify-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+          SIMULATED DEMO DATA — NOT LIVE SENSOR DATA
+        </div>
+
         {/* Page Content */}
         <main
           ref={mainRef}

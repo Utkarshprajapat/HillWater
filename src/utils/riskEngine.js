@@ -223,7 +223,7 @@ export const calculateZoneRisk = (zoneData = {}) => {
 
   // 2. Pressure Stress Factor (0 - 35 points)
   // Evaluates deficit from target and proximity to min threshold
-  let effectivePressure = pressure
+  let effectivePressure = Number(pressure) || 0
   if (intervention) {
     if (intervention.type === 'increase_pump') {
       effectivePressure += (intervention.magnitude / 100) * 0.9

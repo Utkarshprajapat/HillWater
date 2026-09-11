@@ -13,12 +13,14 @@ import {
 
 const ZoneControls = () => {
   const { zones, applyZoneIntervention, addLog } = useData()
-  const [selectedZoneId, setSelectedZoneId] = useState('MAL')
+  const [selectedZoneId, setSelectedZoneId] = useState('')
   const [pumpBoost, setPumpBoost] = useState(0)
   const [valveModulation, setValveModulation] = useState(0)
   const [successMsg, setSuccessMsg] = useState(false)
 
-  const selectedZone = zones.find(z => z.id === selectedZoneId) || zones[0] || {}
+  const effectiveZoneId = selectedZoneId || (zones.length > 0 ? zones[0].id : '')
+
+  const selectedZone = zones.find(z => z.id === effectiveZoneId) || zones[0] || {}
 
   const handleApply = () => {
     if (pumpBoost !== 0) {
@@ -71,13 +73,13 @@ const ZoneControls = () => {
                 handleReset()
               }}
               className={`p-2 rounded-lg text-left text-xs font-bold transition-all border ${
-                selectedZoneId === z.id
+                effectiveZoneId === z.id
                   ? 'bg-sky-600 text-white border-sky-700 shadow-sm'
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
               }`}
             >
               <div className="truncate">{z.name}</div>
-              <div className={`text-[10px] font-mono ${selectedZoneId === z.id ? 'text-sky-200' : 'text-slate-400'}`}>
+              <div className={`text-[10px] font-mono ${effectiveZoneId === z.id ? 'text-sky-200' : 'text-slate-400'}`}>
                 {z.elevation}m • {z.pressure} bar
               </div>
             </button>

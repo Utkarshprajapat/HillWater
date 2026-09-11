@@ -20,11 +20,10 @@ const Header = ({ onMenuClick, onAlertsClick }) => {
   const { 
     isConnected, 
     alerts, 
-    isSurgeActive, 
-    toggleTouristSurge, 
     isDemoRunning, 
     demoStep, 
     demoMessage, 
+    demoComplete,
     runDemoScenario, 
     stopDemoScenario 
   } = useData()
@@ -58,12 +57,32 @@ const Header = ({ onMenuClick, onAlertsClick }) => {
 
   return (
     <header className="bg-white border-b border-slate-200 min-h-16 flex-shrink-0 z-30 sticky top-0 shadow-sm">
-      {/* Demo Scenario Progress Banner (When active) */}
-      {isDemoRunning && (
+      {/* Demo Complete Banner */}
+      {demoComplete && (
+        <div className="bg-emerald-500 text-white px-4 py-1.5 text-xs font-bold flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span className="uppercase font-mono">DEMO COMPLETE — All 6 milestones reached</span>
+          </div>
+          <button 
+            onClick={stopDemoScenario}
+            className="text-[11px] underline font-bold hover:text-emerald-100 transition-colors"
+          >
+            Reset
+          </button>
+        </div>
+      )}
+
+      {/* Demo Scenario Progress Banner (When active, not complete) */}
+      {isDemoRunning && !demoComplete && demoStep > 0 && (
         <div className="bg-amber-500 text-slate-900 px-4 py-1.5 text-xs font-bold flex items-center justify-between animate-pulse">
           <div className="flex items-center gap-2">
             <span className="bg-black text-white px-2 py-0.5 rounded text-[10px] uppercase font-mono">DEMO STEP {demoStep}/6</span>
-            <span>{demoMessage}</span>
+            {demoMessage && (
+              <span className="text-slate-800 font-semibold ml-2 text-[11px]">
+                {demoMessage}
+              </span>
+            )}
           </div>
           <button 
             onClick={stopDemoScenario}
@@ -118,17 +137,13 @@ const Header = ({ onMenuClick, onAlertsClick }) => {
 
           {/* Tourist Surge Trigger */}
           <button
-            onClick={toggleTouristSurge}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 border ${
-              isSurgeActive 
-                ? 'bg-rose-500 text-white border-rose-600 hover:bg-rose-600 ring-2 ring-rose-300' 
-                : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
-            }`}
-            title="Simulate sudden tourist influx in Mallital, Mall Road, and Bara Bazaar"
+            disabled
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm border bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+            title="COMING SOON: Simulate sudden tourist influx in Mallital, Mall Road, and Bara Bazaar"
           >
-            <Users className={`w-3.5 h-3.5 ${isSurgeActive ? 'text-white' : 'text-rose-500'}`} />
-            <span className="hidden sm:inline">{isSurgeActive ? 'Stop Surge' : 'Tourist Surge'}</span>
-            <span className="sm:hidden">{isSurgeActive ? 'Surge ON' : 'Surge'}</span>
+            <Users className="w-3.5 h-3.5 text-slate-400" />
+            <span className="hidden sm:inline">Tourist Surge (Soon)</span>
+            <span className="sm:hidden">Surge (Soon)</span>
           </button>
 
           {/* Run Demo Scenario Button */}

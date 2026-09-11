@@ -52,28 +52,30 @@ const CityOverviewPanel = () => {
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Network Health</span>
-            <div className={`p-1.5 rounded-lg ${healthScore >= 80 ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+            <div className={`p-1.5 rounded-lg ${healthScore >= 80 || healthScore === 'N/A' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
           <div className="my-2">
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-slate-900 font-mono">{healthScore}</span>
-              <span className="text-xs text-slate-400">/ 100</span>
-              <span className={`text-xs font-bold ${systemMetrics.healthTrend?.startsWith('-') ? 'text-rose-600' : 'text-emerald-600'}`}>
-                {systemMetrics.healthTrend || '+1.2%'}
+              {healthScore !== 'N/A' && <span className="text-xs text-slate-400">/ 100</span>}
+              <span className={`text-xs font-bold ${String(systemMetrics.healthTrend).startsWith('-') ? 'text-rose-600' : 'text-slate-400'}`}>
+                {systemMetrics.healthTrend}
               </span>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  healthScore >= 80 ? 'bg-emerald-500' : healthScore >= 60 ? 'bg-amber-500' : 'bg-rose-500'
-                }`}
-                style={{ width: `${healthScore}%` }}
-              />
-            </div>
+            {healthScore !== 'N/A' && (
+              <div className="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    healthScore >= 80 ? 'bg-emerald-500' : healthScore >= 60 ? 'bg-amber-500' : 'bg-rose-500'
+                  }`}
+                  style={{ width: `${healthScore}%` }}
+                />
+              </div>
+            )}
           </div>
-          <p className="text-[10px] text-slate-500">Aggregated across all 12 terrain zones</p>
+          <p className="text-[10px] text-slate-500">Derived UI Indicator from Risk</p>
         </div>
 
         {/* Pressure Stability */}
@@ -87,11 +89,11 @@ const CityOverviewPanel = () => {
           <div className="my-2">
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-black text-slate-900 font-mono">
-                {systemMetrics.pressureStability || 86}%
+                {systemMetrics.pressureStability}
               </span>
             </div>
             <p className="text-xs text-slate-600 font-medium mt-1">
-              Avg Pressure: <strong>{systemMetrics.avgPressure || 2.4} bar</strong>
+              Avg Pressure: <strong>{systemMetrics.avgPressure} bar</strong>
             </p>
           </div>
           <p className="text-[10px] text-slate-500">Gradient loss buffer maintained</p>
@@ -108,15 +110,15 @@ const CityOverviewPanel = () => {
           <div className="my-2">
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-black text-slate-900 font-mono">
-                {systemMetrics.totalFlow ? `${(systemMetrics.totalFlow / 1000).toFixed(1)}k` : '14.8k'}
+                {systemMetrics.totalFlow !== 'N/A' ? `${(systemMetrics.totalFlow / 1000).toFixed(1)}k` : 'N/A'}
               </span>
-              <span className="text-xs text-slate-400">L/min</span>
+              {systemMetrics.totalFlow !== 'N/A' && <span className="text-xs text-slate-400">L/min</span>}
             </div>
             <p className="text-xs text-slate-600 font-medium mt-1">
-              Total Demand: <strong>{systemMetrics.totalDemand ? `${(systemMetrics.totalDemand / 1000).toFixed(1)}k` : '14.2k'} L/m</strong>
+              Total Demand: <strong>{systemMetrics.totalDemand !== 'N/A' ? `${(systemMetrics.totalDemand / 1000).toFixed(1)}k` : 'N/A'} {systemMetrics.totalDemand !== 'N/A' && 'L/m'}</strong>
             </p>
           </div>
-          <p className="text-[10px] text-slate-500">{systemMetrics.flowConsistency || 92}% consistency index</p>
+          <p className="text-[10px] text-slate-500">{systemMetrics.flowConsistency} consistency index</p>
         </div>
 
         {/* Tank Availability */}
@@ -130,13 +132,15 @@ const CityOverviewPanel = () => {
           <div className="my-2">
             <div className="flex items-baseline gap-1.5">
               <span className="text-3xl font-black text-slate-900 font-mono">
-                {systemMetrics.tankAvailability || 74}%
+                {systemMetrics.tankAvailability}
               </span>
-              <span className="text-xs text-slate-400">Avg Level</span>
+              {systemMetrics.tankAvailability !== 'N/A' && <span className="text-xs text-slate-400">% Avg Level</span>}
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${systemMetrics.tankAvailability || 74}%` }} />
-            </div>
+            {systemMetrics.tankAvailability !== 'N/A' && (
+              <div className="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+                <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${systemMetrics.tankAvailability}%` }} />
+              </div>
+            )}
           </div>
           <p className="text-[10px] text-slate-500">Feeder reservoir buffer capacity</p>
         </div>

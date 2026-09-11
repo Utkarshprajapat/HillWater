@@ -15,11 +15,13 @@ import WaterBehaviorAnalysis from '../components/WaterBehaviorAnalysis'
 
 const Analytics = () => {
   const { zones, systemMetrics } = useData()
-  const [selectedZoneId, setSelectedZoneId] = useState('MAL')
+  const [selectedZoneId, setSelectedZoneId] = useState('')
+
+  const activeZoneId = selectedZoneId || (zones.length > 0 ? zones[0].id : '')
 
   const selectedZone = useMemo(() => {
-    return zones.find(z => z.id === selectedZoneId || z.name === selectedZoneId) || zones[0] || {}
-  }, [zones, selectedZoneId])
+    return zones.find(z => z.id === activeZoneId || z.name === activeZoneId) || zones[0] || {}
+  }, [zones, activeZoneId])
 
   return (
     <div className="space-y-8 pb-16 animate-fade-in">
@@ -47,7 +49,7 @@ const Analytics = () => {
             Focus Zone:
           </label>
           <select
-            value={selectedZoneId}
+            value={activeZoneId}
             onChange={(e) => setSelectedZoneId(e.target.value)}
             className="text-xs font-bold bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900 focus:ring-2 focus:ring-sky-500"
           >

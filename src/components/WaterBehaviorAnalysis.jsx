@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   Activity,
   Zap,
@@ -35,47 +35,85 @@ const WaterBehaviorAnalysis = ({ zones = [], selectedZone = null }) => {
     demand: 1380,
   }
 
-  // Generate correlation data between Flow (L/min) and Pressure (bar) across diurnal cycle
-  const behaviorData = useMemo(() => {
-    const data = []
-    const baseP = activeZone.pressure || 2.2
-    const baseF = activeZone.flow || 1350
-    const elev = activeZone.elevation || 1950
-    const pointsCount = timeRange === '24h' ? 24 : timeRange === '7d' ? 7 : 30
+  const [behaviorData, setBehaviorData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasLimitedData, setHasLimitedData] = useState(false)
 
-    for (let i = 0; i < pointsCount; i++) {
-      let label = `${i}:00`
-      let flowMultiplier = 1.0
-
-      if (timeRange === '24h') {
-        // Morning Peak 6-9, Evening Peak 18-21
-        if (i >= 6 && i <= 9) flowMultiplier = 1.38
-        else if (i >= 18 && i <= 21) flowMultiplier = 1.42
-        else if (i >= 0 && i <= 4) flowMultiplier = 0.55
-        else flowMultiplier = 0.95
-      } else if (timeRange === '7d') {
-        label = `Day ${i + 1}`
-        flowMultiplier = (i === 5 || i === 6) ? 1.4 : 1.0 // Weekend tourist surge
-      } else {
-        label = `D-${pointsCount - i}`
-        flowMultiplier = 1.0 + Math.sin(i * 0.5) * 0.25
+  // Fetch real historical data from SQLite
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!activeZone?.id) return;
+      setIsLoading(true);
+      try {
+        const { apiService } = await import('../services/api');
+        const res = await apiService.getHistoricalReadings(activeZone.id, timeRange);
+        if (res.success && res.data && res.data.length > 0) {
+          // Format timestamps for the chart
+          const formattedData = res.data.map(d => {
+            const date = new Date(d.timestamp);
+            let timeLabel = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            if (timeRange !== '24h') {
+              timeLabel = `${date.getMonth() + 1}/${date.getDate()} ` + timeLabel;
+            }
+            return {
+              time: timeLabel,
+              flow: Math.round(d.flow),
+              pressure: Number(d.pressure).toFixed(2),
+              minPressure: activeZone.minPressure || 1.5,
+            };
+          });
+          setBehaviorData(formattedData);
+          setHasLimitedData(false);
+        } else {
+          setBehaviorData([]);
+          setHasLimitedData(true);
+        }
+      } catch (err) {
+        console.error('Failed to fetch historical readings:', err);
+        setBehaviorData([]);
+        setHasLimitedData(true);
+      } finally {
+        setIsLoading(false);
       }
+    };
+    
+    fetchHistory();
+  }, [activeZone?.id, timeRange]);
 
-      const flow = Math.round(baseF * flowMultiplier)
-      // Elevation head resistance causes inverse pressure drop during high flow
-      const elevPenalty = ((elev - 1500) / 760) * 0.25
-      const pressure = Number(Math.max(0.8, baseP - ((flowMultiplier - 1.0) * 0.9) - (elevPenalty * 0.2)).toFixed(2))
-
-      data.push({
-        time: label,
-        flow,
-        pressure,
-        minPressure: activeZone.minPressure || 1.5,
-      })
-    }
-
-    return data
-  }, [activeZone, timeRange])
+    const { pressureDomain, flowDomain } = useMemo(() => {
+      if (!behaviorData || behaviorData.length === 0) {
+        return { pressureDomain: [0, 10], flowDomain: [0, 2500] };
+      }
+  
+      const pressures = behaviorData
+        .map(d => Number(d.pressure))
+        .filter(p => !isNaN(p) && p !== null);
+      
+      const flows = behaviorData
+        .map(d => Number(d.flow))
+        .filter(f => !isNaN(f) && f !== null);
+  
+      let pMin = pressures.length > 0 ? Math.min(...pressures) : 0;
+      let pMax = pressures.length > 0 ? Math.max(...pressures) : 10;
+      
+      const target = Number(activeZone.minPressure) || 1.5;
+      pMin = Math.min(pMin, target);
+      pMax = Math.max(pMax, target);
+      
+      const pRange = pMax - pMin;
+      const pPadding = pRange === 0 ? 1 : pRange * 0.15;
+      
+      let fMin = flows.length > 0 ? Math.min(...flows) : 0;
+      let fMax = flows.length > 0 ? Math.max(...flows) : 2500;
+  
+      const fRange = fMax - fMin;
+      const fPadding = fRange === 0 ? 100 : fRange * 0.15;
+  
+      return {
+        pressureDomain: [Math.max(0, pMin - pPadding), pMax + pPadding],
+        flowDomain: [Math.max(0, fMin - fPadding), fMax + fPadding]
+      };
+    }, [behaviorData, activeZone?.minPressure]);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
@@ -111,7 +149,16 @@ const WaterBehaviorAnalysis = ({ zones = [], selectedZone = null }) => {
       </div>
 
       {/* Chart */}
-      <div className="h-[300px] w-full">
+      <div className="h-[300px] w-full relative">
+        {hasLimitedData && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200">
+            <div className="text-center">
+              <Activity className="w-8 h-8 text-slate-400 mx-auto mb-2 opacity-50" />
+              <p className="text-sm font-bold text-slate-600">Limited historical data available</p>
+              <p className="text-xs text-slate-400 mt-1">Run the simulator to generate telemetry.</p>
+            </div>
+          </div>
+        )}
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={behaviorData} margin={{ top: 10, right: 15, left: -15, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
@@ -119,7 +166,7 @@ const WaterBehaviorAnalysis = ({ zones = [], selectedZone = null }) => {
             {/* Left Y Axis: Pressure */}
             <YAxis
               yAxisId="left"
-              domain={[0.5, 4.0]}
+              domain={pressureDomain}
               tick={{ fill: '#0284C7', fontSize: 11 }}
               label={{ value: 'Pressure (bar)', angle: -90, position: 'insideLeft', fill: '#0284C7', fontSize: 11 }}
             />
@@ -127,7 +174,7 @@ const WaterBehaviorAnalysis = ({ zones = [], selectedZone = null }) => {
             <YAxis
               yAxisId="right"
               orientation="right"
-              domain={[400, 2500]}
+              domain={flowDomain}
               tick={{ fill: '#64748B', fontSize: 11 }}
               label={{ value: 'Flow (L/min)', angle: 90, position: 'insideRight', fill: '#64748B', fontSize: 11 }}
             />
